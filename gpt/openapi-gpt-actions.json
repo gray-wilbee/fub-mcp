@@ -2948,7 +2948,7 @@
             "description": "Number of results to return. Max 100.",
             "schema": {
               "type": "string",
-              "default": 100
+              "default": "100"
             }
           },
           {
