@@ -3,6 +3,8 @@ import {
   extraTools,
   descriptionAppendix,
   paramDefaultOverrides,
+  sensitiveTools,
+  highBlastRadiusDeletes,
 } from "./overrides/index.js";
 import { FubConfig } from "./auth.js";
 import { fubRequest } from "./http.js";
@@ -64,6 +66,17 @@ const CONFIRM_NOTICE =
   "this specific record deleted (name/identify the record back to them and wait for a " +
   "clear yes). Requires confirm=true.";
 
+const BLAST_RADIUS_NOTICE =
+  " HIGH BLAST RADIUS: unlike deleting a single note or task, this can affect every " +
+  "record that referenced it (e.g. every contact in a deleted stage, every record " +
+  "with this custom field populated). Be extra explicit with the user about what " +
+  "else this will affect before calling it.";
+
+const SEND_CONFIRM_NOTICE =
+  " Do not call this until the user has explicitly confirmed the recipients and " +
+  "content in this conversation — treat it exactly like sending a message on their " +
+  "behalf. Requires confirm=true.";
+
 export function buildToolDefs(config: FubConfig): ToolDef[] {
   const all = [...generateTools(), ...extraTools];
 
@@ -73,6 +86,13 @@ export function buildToolDefs(config: FubConfig): ToolDef[] {
     }
     if (tool.isDelete) {
       tool.description += CONFIRM_NOTICE;
+      if (highBlastRadiusDeletes.has(tool.name)) {
+        tool.description += BLAST_RADIUS_NOTICE;
+      }
+    }
+    if (sensitiveTools.has(tool.name)) {
+      tool.requiresConfirm = true;
+      tool.description += SEND_CONFIRM_NOTICE;
     }
 
     const overrides = paramDefaultOverrides[tool.name];
@@ -124,14 +144,24 @@ export function toMcpSchema(tool: ToolDef): McpToolSchema {
     };
   }
 
-  if (tool.isDelete) {
+  if (tool.isDelete || tool.requiresConfirm) {
+    properties.confirm = {
+      type: "boolean",
+      description: tool.isDelete
+        ? "Must be true. Only set this after the user has explicitly confirmed they " +
+          "want this specific record deleted."
+        : "Must be true. Only set this after the user has explicitly confirmed the " +
+          "recipients and content of what this will send.",
+    };
+    required.push("confirm");
+  } else if (tool.name === "update_person") {
     properties.confirm = {
       type: "boolean",
       description:
-        "Must be true. Only set this after the user has explicitly confirmed they " +
-        "want this specific record deleted.",
+        "Only needed if `stage` is being set to \"Trash\" — must be true in that " +
+        "case, confirmed with the user first (it hides the contact from default " +
+        "views). Not needed for any other update.",
     };
-    required.push("confirm");
   }
 
   return {
@@ -146,19 +176,17 @@ export async function executeTool(
   tool: ToolDef,
   args: Record<string, unknown>
 ): Promise<unknown> {
-  if (tool.isDelete) {
-    if (!config.allowDelete) {
-      throw new Error(
-        `${tool.name} is disabled. Set FUB_MCP_ALLOW_DELETE=1 in this server's ` +
-          "environment to enable delete tools."
-      );
-    }
-    if (args.confirm !== true) {
-      throw new Error(
-        `${tool.name} requires confirm=true. Do not set this without explicit, ` +
-          "specific confirmation from the user for this exact record."
-      );
-    }
+  if (tool.isDelete && !config.allowDelete) {
+    throw new Error(
+      `${tool.name} is disabled. Set FUB_MCP_ALLOW_DELETE=1 in this server's ` +
+        "environment to enable delete tools."
+    );
+  }
+  if ((tool.isDelete || tool.requiresConfirm) && args.confirm !== true) {
+    throw new Error(
+      `${tool.name} requires confirm=true. Do not set this without explicit, ` +
+        "specific confirmation from the user first."
+    );
   }
 
   let path = tool.pathTemplate;
@@ -189,6 +217,18 @@ export async function executeTool(
   }
   if (tool.hasExtraBody && args.extraBody && typeof args.extraBody === "object") {
     Object.assign(body, args.extraBody as Record<string, unknown>);
+  }
+
+  if (
+    tool.name === "update_person" &&
+    typeof body.stage === "string" &&
+    body.stage.toLowerCase() === "trash" &&
+    args.confirm !== true
+  ) {
+    throw new Error(
+      "update_person requires confirm=true when setting stage to \"Trash\" — " +
+        "confirm with the user first, since it hides the contact from default views."
+    );
   }
 
   if (path.includes("{")) {

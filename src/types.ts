@@ -28,4 +28,6 @@ export interface ToolDef {
   hasExtraQuery: boolean;
   hasExtraBody: boolean;
   isDelete: boolean;
+  /** Non-delete but still hard-to-undo/visible-to-others — needs confirm=true. */
+  requiresConfirm?: boolean;
 }
