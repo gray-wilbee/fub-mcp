@@ -94,28 +94,34 @@ export const descriptionAppendix: Record<string, string> = {
     " `body` is the raw HTML of the email template directly — there is no separate " +
     "isHtml/html flag for templates (unlike notes, which need isHtml=true explicitly).",
   post_templates_merge:
-    " This actually SENDS a real email to the listed recipients using the given " +
-    "template — despite the generic \"merge\" name, this is not a preview/render-" +
-    "only action. Treat it like sending a message on the user's behalf: confirm " +
-    "the template, recipients, and merge person with the user before calling.",
+    " Despite the name, this almost certainly does NOT send anything — inferred " +
+    "from its identical-shaped sibling post_text_message_templates_merge, which was " +
+    "verified live 2026-09 (firing it at a real phone number produced no delivery " +
+    "and no new record in list_text_messages, only a rendered string back); the " +
+    "email variant itself wasn't separately fired to avoid sending an unwanted " +
+    "email. It's a preview/render utility for the edge case of one message " +
+    "greeting multiple recipients at once (e.g. \"Hey Bob, Alice and Carol...\") — " +
+    "useful for composing that combined greeting, not for actually delivering it.",
   post_text_message_templates_merge:
-    " This actually SENDS a real text message to the listed recipients using the " +
-    "given template — despite the generic \"merge\" name, this is not a preview-" +
-    "only action. Treat it like sending a message on the user's behalf: confirm " +
-    "the template and recipients with the user before calling.",
+    " Despite the name, this does NOT send anything — verified live 2026-09: firing " +
+    "this at a real phone number produced no delivery and no new record in " +
+    "list_text_messages, only a rendered string back ({\"mergedTemplate\": \"...\"}). " +
+    "It's a preview/render utility for the edge case of one text greeting multiple " +
+    "recipients at once (e.g. \"Hey Bob, Alice and Carol...\"), not an actual send.",
 };
 
 /**
  * Tools that aren't DELETEs but still take a hard-to-undo, visible-to-others
- * action (sending real communication, in this case) — same confirm=true
- * discipline as deletes, but not gated behind FUB_MCP_ALLOW_DELETE since
- * they're not destructive to existing data and shouldn't need an extra
- * server-startup opt-in on top of per-call confirmation.
+ * action (e.g. actually sending real communication) — same confirm=true
+ * discipline as deletes via ToolDef.requiresConfirm, but not gated behind
+ * FUB_MCP_ALLOW_DELETE. Currently empty: post_templates_merge and
+ * post_text_message_templates_merge were the only candidates, and testing
+ * live against a real phone number (2026-09) showed neither one actually
+ * sends anything — see their descriptionAppendix entries above. Kept as an
+ * explicit mechanism rather than removed, since a genuinely sensitive
+ * non-delete action would be easy to miss without one.
  */
-export const sensitiveTools = new Set<string>([
-  "post_templates_merge",
-  "post_text_message_templates_merge",
-]);
+export const sensitiveTools = new Set<string>([]);
 
 /**
  * Deletes whose blast radius extends well beyond the one record being
