@@ -10,8 +10,34 @@ real but undocumented. Runs entirely on your machine — your API key never leav
 
 ## Install
 
-Add to your MCP client's config (e.g. Claude Desktop's
-`claude_desktop_config.json`, or Claude Code's MCP settings):
+### Easiest: guided setup (macOS)
+
+```bash
+npx -y fub-mcp setup
+```
+
+This pops a native macOS dialog (masked input, like a password field) asking for
+your Follow Up Boss API key (FUB → Admin → API). It validates the key against the
+live API before saving, stores it in `~/.fub-mcp/.env` (permissions restricted to
+your user only), and wires the `mcpServers` entry into Claude Desktop's config for
+you — automatically. **Your key is never typed into a Claude conversation, never
+seen by any LLM, and never written into `claude_desktop_config.json`** — that file
+only ends up with a secret-free `{"command": "npx", "args": ["-y", "fub-mcp"]}`
+entry pointing at the server, which loads the key from `~/.fub-mcp/.env` at
+startup instead.
+
+Windows/Linux support for the guided setup isn't built yet — use the manual method
+below on those platforms for now.
+
+If you're on Claude Desktop or Claude Code, the [`claude-setup`](./claude-setup)
+skill has Claude tell you to run the one command above rather than trying to collect
+your key itself — see that folder's `SKILL.md` for why (short version: a plain chat
+message isn't a safe place for a live CRM credential to sit).
+
+### Manual
+
+Add to your MCP client's config (e.g. Claude Desktop's `claude_desktop_config.json`,
+or Claude Code's MCP settings):
 
 ```json
 {
@@ -28,9 +54,6 @@ Add to your MCP client's config (e.g. Claude Desktop's
 ```
 
 Get your API key from Follow Up Boss: **Admin → API**.
-
-If you use Claude Desktop or Claude Code, the [`claude-setup`](./claude-setup)
-skill will do this file edit for you — see that folder's `SKILL.md`.
 
 ### Optional environment variables
 

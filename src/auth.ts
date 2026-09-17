@@ -1,3 +1,5 @@
+import { readLocalEnvFile, LOCAL_ENV_FILE } from "./local-store.js";
+
 export interface FubConfig {
   apiKey: string;
   systemName: string;
@@ -6,11 +8,16 @@ export interface FubConfig {
 }
 
 export function loadConfig(): FubConfig {
-  const apiKey = process.env.FUB_API_KEY;
+  // Prefer the client config's env block if set; otherwise fall back to the
+  // key saved locally by `fub-mcp setup` (native popup, never touches an LLM
+  // context). This lets claude_desktop_config.json stay secret-free.
+  const local = readLocalEnvFile();
+  const apiKey = process.env.FUB_API_KEY || local.FUB_API_KEY;
   if (!apiKey) {
     throw new Error(
-      "FUB_API_KEY is not set. Add it to your MCP client's server config (env) " +
-        "or a local .env file — see .env.example."
+      "FUB_API_KEY is not set. Run `npx fub-mcp setup` to enter it via a native " +
+        `popup (saved to ${LOCAL_ENV_FILE}), or set FUB_API_KEY directly in your ` +
+        "MCP client's server config."
     );
   }
   return {
