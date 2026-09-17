@@ -55,7 +55,10 @@ async function validateKey(apiKey: string): Promise<string | null> {
   }
 }
 
-export function mergeClaudeConfig(): { wrote: boolean; message: string } {
+export function mergeClaudeConfig(
+  serverEntry: Record<string, unknown>,
+  opts: { overwrite?: boolean } = {}
+): { wrote: boolean; message: string } {
   let existing: Record<string, unknown> = {};
   if (fs.existsSync(CLAUDE_CONFIG_PATH)) {
     try {
@@ -71,25 +74,25 @@ export function mergeClaudeConfig(): { wrote: boolean; message: string } {
   }
 
   const mcpServers = (existing.mcpServers as Record<string, unknown>) || {};
-  if (mcpServers.fubMcp || mcpServers["fub-mcp"]) {
+  if ((mcpServers.fubMcp || mcpServers["fub-mcp"]) && !opts.overwrite) {
     return {
       wrote: false,
       message: "An mcpServers entry for fub-mcp already exists — left it as-is.",
     };
   }
 
-  mcpServers["fub-mcp"] = { command: "npx", args: ["-y", "fub-mcp"] };
+  mcpServers["fub-mcp"] = serverEntry;
   existing.mcpServers = mcpServers;
 
   fs.mkdirSync(path.dirname(CLAUDE_CONFIG_PATH), { recursive: true });
   fs.writeFileSync(CLAUDE_CONFIG_PATH, JSON.stringify(existing, null, 2) + "\n");
   return {
     wrote: true,
-    message: `Added fub-mcp to ${CLAUDE_CONFIG_PATH} (no secret stored in that file).`,
+    message: `Set fub-mcp entry in ${CLAUDE_CONFIG_PATH} (no secret stored in that file).`,
   };
 }
 
-export async function runSetup(): Promise<void> {
+export async function runSetup(opts: { local?: boolean } = {}): Promise<void> {
   if (process.platform !== "darwin") {
     console.error(
       "`fub-mcp setup`'s native popup currently only supports macOS.\n" +
@@ -132,7 +135,13 @@ export async function runSetup(): Promise<void> {
     }
 
     writeLocalApiKey(key);
-    const configResult = mergeClaudeConfig();
+    const serverEntry = opts.local
+      ? {
+          command: process.execPath, // this Node binary, for reproducible dev testing
+          args: [path.join(path.dirname(new URL(import.meta.url).pathname), "index.js")],
+        }
+      : { command: "npx", args: ["-y", "fub-mcp"] };
+    const configResult = mergeClaudeConfig(serverEntry, { overwrite: opts.local });
 
     macAlert(
       `Connected to ${account}. Key saved locally.\n${configResult.message}\n\n` +

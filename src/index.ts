@@ -67,7 +67,7 @@ async function startServer() {
 
 async function main() {
   if (process.argv[2] === "setup") {
-    await runSetup();
+    await runSetup({ local: process.argv.includes("--local") });
     return;
   }
   await startServer();
