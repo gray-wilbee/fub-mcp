@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.3",
+  "openapi": "3.1.0",
   "info": {
     "title": "Follow Up Boss (fub-mcp trimmed for Custom GPT Actions)",
     "description": "A curated operation subset of the Follow Up Boss CRM API for on-the-go use as a ChatGPT Custom GPT Action, focused on recalling client history and quick CRM actions in the field. Each user authenticates with their OWN Follow Up Boss personal API key (HTTP Basic auth) \u2014 this schema is not tied to any single account. See gpt/SETUP.md for exact auth setup steps, and gpt/gpt-instructions.md for the GPT's behavior instructions (defaults, gotchas, custom field handling, API content limitations).",
@@ -16,7 +16,8 @@
         "type": "http",
         "scheme": "basic"
       }
-    }
+    },
+    "schemas": {}
   },
   "security": [
     {
