@@ -30,6 +30,12 @@ Custom fields:
 - FUB accounts have their own custom fields (e.g. "Closing Date", "Lender"). Call the
   Custom Fields list operation to discover the exact field name/label before reading
   or writing a `custom.*` value — don't assume a field exists or guess its exact name.
+- These aren't individually listed as parameters on the People operations (FUB's own
+  docs represent them as a "custom*" wildcard, which isn't a valid parameter name and
+  had to be removed from this schema) — you can still send them as extra query
+  parameters (GET /people, e.g. `customClosingDate=2026-01-01`) or extra JSON body
+  fields (POST/PUT /people, e.g. `"customClosingDate": "2026-01-01"`) beyond what's
+  formally in the schema; the API accepts them even though they aren't enumerated.
 
 Tags on people:
 - Adding tags: pass the new tags with `mergeTags=true` on the person update

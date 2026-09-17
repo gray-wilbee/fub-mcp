@@ -250,14 +250,6 @@
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "name": "custom*",
-            "in": "query",
-            "description": "You can include any of your Custom Fields in the request, these must be prefixed with \"custom\".  For example, if you have a *Closing Date* custom field, the JSON key for that field will be `customClosingDate`.  See [Custom Fields](doc:custom-fields-get) for more about Custom Fields.",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -457,10 +449,6 @@
                       "type": "integer",
                       "format": "int32"
                     }
-                  },
-                  "custom*": {
-                    "type": "string",
-                    "description": "You can include any of your Custom Fields in the request, these must be prefixed with \"custom\".  For example, if you have a *Closing Date* custom field, the JSON key for that field will be `customClosingDate`.  See [Custom Fields](doc:custom-fields-get) for more about Custom Fields."
                   },
                   "timeframeId": {
                     "type": "integer",
@@ -736,10 +724,6 @@
                   "background": {
                     "type": "string",
                     "description": "Background information on the person. (Can be a multi-line string.)"
-                  },
-                  "custom*": {
-                    "type": "string",
-                    "description": "You can include any of your Custom Fields in the request, these must be prefixed with \"custom\".  For example, if you have a *Closing Date* custom field, the JSON key for that field will be `customClosingDate`.  See [Custom Fields](doc:custom-fields-get) for more about Custom Fields."
                   },
                   "timeframeId": {
                     "type": "integer",
