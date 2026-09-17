@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Follow Up Boss (fub-mcp trimmed for Custom GPT Actions)",
-    "description": "A curated ~24-operation subset of the Follow Up Boss CRM API for on-the-go use as a ChatGPT Custom GPT Action. Each user authenticates with their OWN Follow Up Boss personal API key (HTTP Basic auth) \u2014 this schema is not tied to any single account. See gpt/SETUP.md for exact auth setup steps, and gpt/gpt-instructions.md for the GPT's behavior instructions (defaults, gotchas, custom field handling).",
-    "version": "0.1.0"
+    "description": "A curated operation subset of the Follow Up Boss CRM API for on-the-go use as a ChatGPT Custom GPT Action, focused on recalling client history and quick CRM actions in the field. Each user authenticates with their OWN Follow Up Boss personal API key (HTTP Basic auth) \u2014 this schema is not tied to any single account. See gpt/SETUP.md for exact auth setup steps, and gpt/gpt-instructions.md for the GPT's behavior instructions (defaults, gotchas, custom field handling, API content limitations).",
+    "version": "0.2.0"
   },
   "servers": [
     {
@@ -54,7 +54,7 @@
             "schema": {
               "type": "integer",
               "format": "int32",
-              "default": 10
+              "default": 100
             }
           },
           {
@@ -912,7 +912,8 @@
             }
           }
         },
-        "deprecated": false
+        "deprecated": false,
+        "parameters": []
       },
       "get": {
         "summary": "/notes (undocumented)",
@@ -1258,7 +1259,8 @@
             }
           }
         },
-        "deprecated": false
+        "deprecated": false,
+        "parameters": []
       }
     },
     "/tasks/{id}": {
@@ -1374,7 +1376,7 @@
             "schema": {
               "type": "integer",
               "format": "int32",
-              "default": 10
+              "default": 100
             }
           },
           {
@@ -2101,7 +2103,8 @@
             }
           }
         },
-        "deprecated": false
+        "deprecated": false,
+        "parameters": []
       }
     },
     "/deals/{id}": {
@@ -2516,7 +2519,7 @@
             "schema": {
               "type": "integer",
               "format": "int32",
-              "default": 10
+              "default": 100
             }
           },
           {
@@ -2640,7 +2643,7 @@
             "schema": {
               "type": "integer",
               "format": "int32",
-              "default": 10
+              "default": 100
             }
           },
           {
@@ -2755,7 +2758,7 @@
             "schema": {
               "type": "integer",
               "format": "int32",
-              "default": 10
+              "default": 100
             }
           },
           {
@@ -2929,6 +2932,298 @@
             }
           }
         },
+        "deprecated": false,
+        "parameters": []
+      }
+    },
+    "/textMessageTemplates": {
+      "get": {
+        "summary": "/textMessageTemplates",
+        "description": "Lists all text message templates.",
+        "operationId": "textmessagetemplates-get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of results to return. Max 100.",
+            "schema": {
+              "type": "string",
+              "default": 100
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Specifies the number of rows to skip before starting to return results.",
+            "schema": {
+              "type": "string",
+              "default": "0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"_metadata\": {\n    \"collection\": \"textmessagetemplates\",\n    \"offset\": 0,\n    \"limit\": 2,\n    \"total\": 24,\n    \"next\": \"eyJvZmZzZXQiOjN9\",\n    \"nextLink\": \"https://api.followupboss.com/v1/textMessageTemplates?limit=3&next=eyJvZmZzZXQiOjN9\"\n  },\n  \"textmessagetemplates\": [\n    {\n      \"id\": 110,\n      \"name\": \"Agent > Client + Lender intro\",\n      \"totalSent\": 1,\n      \"totalReplies\": 1,\n      \"message\": \"%lender_first_name% - %contact_first_name% is a client of mine who's going to be buying a property shortly. Can you please take point on getting them pre-approved?\",\n      \"isShared\": true,\n      \"createdBy\": -1,\n      \"isEditable\": true,\n      \"isDeletable\": true,\n      \"isShareable\": false,\n      \"sentPeopleIds\": [\n        34663\n      ],\n      \"actionPlans\": []\n    },\n    {\n      \"id\": 98,\n      \"name\": \"Buyer Appointment\",\n      \"totalSent\": 3,\n      \"totalReplies\": 0,\n      \"message\": \"%contact_first_name%, are you free this week to take a quick tour of a home I picked out for you?\",\n      \"isShared\": true,\n      \"createdBy\": -1,\n      \"isEditable\": true,\n      \"isDeletable\": true,\n      \"isShareable\": false,\n      \"sentPeopleIds\": [\n        39984,\n        40867\n      ],\n      \"actionPlans\": []\n    }\n  ]\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_metadata": {
+                      "type": "object",
+                      "properties": {
+                        "collection": {
+                          "type": "string",
+                          "example": "textmessagetemplates"
+                        },
+                        "offset": {
+                          "type": "integer",
+                          "example": 0,
+                          "default": 0
+                        },
+                        "limit": {
+                          "type": "integer",
+                          "example": 2,
+                          "default": 0
+                        },
+                        "total": {
+                          "type": "integer",
+                          "example": 24,
+                          "default": 0
+                        },
+                        "next": {
+                          "type": "string",
+                          "example": "eyJvZmZzZXQiOjN9"
+                        },
+                        "nextLink": {
+                          "type": "string",
+                          "example": "https://api.followupboss.com/v1/textMessageTemplates?limit=3&next=eyJvZmZzZXQiOjN9"
+                        }
+                      }
+                    },
+                    "textmessagetemplates": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "example": 110,
+                            "default": 0
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "Agent > Client + Lender intro"
+                          },
+                          "totalSent": {
+                            "type": "integer",
+                            "example": 1,
+                            "default": 0
+                          },
+                          "totalReplies": {
+                            "type": "integer",
+                            "example": 1,
+                            "default": 0
+                          },
+                          "message": {
+                            "type": "string",
+                            "example": "%lender_first_name% - %contact_first_name% is a client of mine who's going to be buying a property shortly. Can you please take point on getting them pre-approved?"
+                          },
+                          "isShared": {
+                            "type": "boolean",
+                            "example": true,
+                            "default": true
+                          },
+                          "createdBy": {
+                            "type": "integer",
+                            "example": -1,
+                            "default": 0
+                          },
+                          "isEditable": {
+                            "type": "boolean",
+                            "example": true,
+                            "default": true
+                          },
+                          "isDeletable": {
+                            "type": "boolean",
+                            "example": true,
+                            "default": true
+                          },
+                          "isShareable": {
+                            "type": "boolean",
+                            "example": false,
+                            "default": true
+                          },
+                          "sentPeopleIds": {
+                            "type": "array",
+                            "items": {
+                              "type": "integer",
+                              "example": 34663,
+                              "default": 0
+                            }
+                          },
+                          "actionPlans": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {}
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "post": {
+        "summary": "/textMessageTemplates",
+        "description": "Create a text message template.",
+        "operationId": "textmessagetemplates-post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "message"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The name of your text message template."
+                  },
+                  "message": {
+                    "type": "string",
+                    "description": "The body of your text message template."
+                  },
+                  "isShared": {
+                    "type": "boolean",
+                    "description": "Set to true if this template should be shared with other users in the same Follow Up Boss account."
+                  }
+                }
+              },
+              "examples": {
+                "Request Example": {
+                  "value": {
+                    "name": "Beach House promo",
+                    "message": "%greeting_time%, %contact_first_name%\n\nCheck out this beach house: https://example.com",
+                    "isShared": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"id\": 182,\n  \"name\": \"Beach House promo\",\n  \"totalSent\": 0,\n  \"totalReplies\": 0,\n  \"message\": \"%greeting_time%, %contact_first_name%\\n\\nCheck out this beach house: https://example.com\",\n  \"isShared\": true,\n  \"createdBy\": 15,\n  \"isEditable\": true,\n  \"isShareable\": true,\n  \"isDeletable\": true,\n  \"categories\": [],\n  \"sentPeopleCount\": 0,\n  \"actionPlans\": [],\n  \"effectivenessScore\": null,\n  \"windowedSent\": 0,\n  \"windowedReplies\": 0,\n  \"windowedOptOutRate\": null,\n  \"totalOptOutRate\": null\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "example": 182,
+                      "default": 0
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Beach House promo"
+                    },
+                    "totalSent": {
+                      "type": "integer",
+                      "example": 0,
+                      "default": 0
+                    },
+                    "totalReplies": {
+                      "type": "integer",
+                      "example": 0,
+                      "default": 0
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "%greeting_time%, %contact_first_name%\n\nCheck out this beach house: https://example.com"
+                    },
+                    "isShared": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "createdBy": {
+                      "type": "integer",
+                      "example": 15,
+                      "default": 0
+                    },
+                    "isEditable": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "isShareable": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "isDeletable": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "categories": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {}
+                      }
+                    },
+                    "sentPeopleCount": {
+                      "type": "integer",
+                      "example": 0,
+                      "default": 0
+                    },
+                    "actionPlans": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {}
+                      }
+                    },
+                    "effectivenessScore": {},
+                    "windowedSent": {
+                      "type": "integer",
+                      "example": 0,
+                      "default": 0
+                    },
+                    "windowedReplies": {
+                      "type": "integer",
+                      "example": 0,
+                      "default": 0
+                    },
+                    "windowedOptOutRate": {},
+                    "totalOptOutRate": {}
+                  }
+                }
+              }
+            }
+          }
+        },
         "deprecated": false
       }
     },
@@ -2945,7 +3240,7 @@
             "schema": {
               "type": "integer",
               "format": "int32",
-              "default": 10
+              "default": 100
             }
           },
           {
@@ -3038,7 +3333,7 @@
             "schema": {
               "type": "integer",
               "format": "int32",
-              "default": 10
+              "default": 100
             }
           },
           {
@@ -3205,6 +3500,401 @@
                 "schema": {
                   "type": "object",
                   "properties": {}
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false,
+        "parameters": []
+      }
+    },
+    "/textMessages": {
+      "get": {
+        "summary": "/textMessages",
+        "description": "List text messages for a person or phone number.",
+        "operationId": "textmessages-get",
+        "parameters": [
+          {
+            "name": "personId",
+            "in": "query",
+            "description": "Filter text messages for a specific person id only.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "toNumber",
+            "in": "query",
+            "description": "Filter text messages sent to a specific recipient's phone number.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fromNumber",
+            "in": "query",
+            "description": "Filter text messages sent from a specific sender's phone number.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"_metadata\": {\n        \"collection\": \"textmessages\",\n        \"offset\": 0,\n        \"limit\": 10,\n        \"total\": 1,\n        \"next\": null,\n        \"nextLink\": null\n    },\n    \"textmessages\": [\n        {\n            \"id\": 14,\n            \"created\": \"2020-08-06T21:07:51Z\",\n            \"updated\": \"2020-08-06T21:07:51Z\",\n            \"createdById\": 1,\n            \"updatedById\": 1,\n            \"personId\": 3,\n            \"name\": \"Tom Minch\",\n            \"firstName\": \"Tom\",\n            \"lastName\": \"Minch\",\n            \"picture\": null,\n            \"userId\": 1,\n            \"userName\": \"Steven Wade\",\n            \"status\": \"Received\",\n            \"message\": \"Content is hidden for privacy reasons.\",\n            \"fromNumber\": \"8885551234\",\n            \"toNumber\": \"8885559876\",\n            \"sent\": \"2020-08-06T21:07:51Z\",\n            \"isIncoming\": false,\n            \"archived\": false,\n            \"read\": false,\n            \"sharedInboxId\": 0,\n            \"actionPlanId\": 0,\n            \"groupTextId\": null,\n            \"isExternal\": true,\n            \"externalUrl\": null,\n            \"externalLabel\": null,\n            \"media\": [],\n            \"participants\": [\n              {\n                \"name\": null,\n                \"phone\": \"+12345678900\",\n                \"sender\": true,\n                \"canReply\": false,\n                \"phoneLabel\": \"\",\n                \"type\": \"person\",\n                \"personId\": 0,\n                \"relationshipId\": 0,\n                \"avatar\": null,\n                \"summaryAccessOnly\": false\n              },\n              {\n                \"name\": null,\n                \"phone\": \"+19876543210\",\n                \"sender\": true,\n                \"canReply\": false,\n                \"phoneLabel\": \"\",\n                \"type\": \"person\",\n                \"personId\": 0,\n                \"relationshipId\": 0,\n                \"avatar\": null,\n                \"summaryAccessOnly\": false\n              }\n            ],\n            \"systemName\": \"SwadeBook Pro\"\n        }\n    ]\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_metadata": {
+                      "type": "object",
+                      "properties": {
+                        "collection": {
+                          "type": "string",
+                          "example": "textmessages"
+                        },
+                        "offset": {
+                          "type": "integer",
+                          "example": 0,
+                          "default": 0
+                        },
+                        "limit": {
+                          "type": "integer",
+                          "example": 10,
+                          "default": 0
+                        },
+                        "total": {
+                          "type": "integer",
+                          "example": 1,
+                          "default": 0
+                        },
+                        "next": {},
+                        "nextLink": {}
+                      }
+                    },
+                    "textmessages": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "example": 14,
+                            "default": 0
+                          },
+                          "created": {
+                            "type": "string",
+                            "example": "2020-08-06T21:07:51Z"
+                          },
+                          "updated": {
+                            "type": "string",
+                            "example": "2020-08-06T21:07:51Z"
+                          },
+                          "createdById": {
+                            "type": "integer",
+                            "example": 1,
+                            "default": 0
+                          },
+                          "updatedById": {
+                            "type": "integer",
+                            "example": 1,
+                            "default": 0
+                          },
+                          "personId": {
+                            "type": "integer",
+                            "example": 3,
+                            "default": 0
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "Tom Minch"
+                          },
+                          "firstName": {
+                            "type": "string",
+                            "example": "Tom"
+                          },
+                          "lastName": {
+                            "type": "string",
+                            "example": "Minch"
+                          },
+                          "picture": {},
+                          "userId": {
+                            "type": "integer",
+                            "example": 1,
+                            "default": 0
+                          },
+                          "userName": {
+                            "type": "string",
+                            "example": "Steven Wade"
+                          },
+                          "status": {
+                            "type": "string",
+                            "example": "Received"
+                          },
+                          "message": {
+                            "type": "string",
+                            "example": "Content is hidden for privacy reasons."
+                          },
+                          "fromNumber": {
+                            "type": "string",
+                            "example": "8885551234"
+                          },
+                          "toNumber": {
+                            "type": "string",
+                            "example": "8885559876"
+                          },
+                          "sent": {
+                            "type": "string",
+                            "example": "2020-08-06T21:07:51Z"
+                          },
+                          "isIncoming": {
+                            "type": "boolean",
+                            "example": false,
+                            "default": true
+                          },
+                          "archived": {
+                            "type": "boolean",
+                            "example": false,
+                            "default": true
+                          },
+                          "read": {
+                            "type": "boolean",
+                            "example": false,
+                            "default": true
+                          },
+                          "sharedInboxId": {
+                            "type": "integer",
+                            "example": 0,
+                            "default": 0
+                          },
+                          "actionPlanId": {
+                            "type": "integer",
+                            "example": 0,
+                            "default": 0
+                          },
+                          "groupTextId": {},
+                          "isExternal": {
+                            "type": "boolean",
+                            "example": true,
+                            "default": true
+                          },
+                          "externalUrl": {},
+                          "externalLabel": {},
+                          "media": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {}
+                            }
+                          },
+                          "participants": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "name": {},
+                                "phone": {
+                                  "type": "string",
+                                  "example": "+12345678900"
+                                },
+                                "sender": {
+                                  "type": "boolean",
+                                  "example": true,
+                                  "default": true
+                                },
+                                "canReply": {
+                                  "type": "boolean",
+                                  "example": false,
+                                  "default": true
+                                },
+                                "phoneLabel": {
+                                  "type": "string",
+                                  "example": ""
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "example": "person"
+                                },
+                                "personId": {
+                                  "type": "integer",
+                                  "example": 0,
+                                  "default": 0
+                                },
+                                "relationshipId": {
+                                  "type": "integer",
+                                  "example": 0,
+                                  "default": 0
+                                },
+                                "avatar": {},
+                                "summaryAccessOnly": {
+                                  "type": "boolean",
+                                  "example": false,
+                                  "default": true
+                                }
+                              }
+                            }
+                          },
+                          "systemName": {
+                            "type": "string",
+                            "example": "SwadeBook Pro"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/pipelines": {
+      "get": {
+        "summary": "/pipelines",
+        "description": "Search for pipelines.",
+        "operationId": "pipelines-get",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "The pipeline name to lookup. (Must be an exact match.)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"_metadata\": {\n    \"collection\": \"pipelines\",\n    \"offset\": 0,\n    \"limit\": 10,\n    \"total\": 1\n  },\n  \"pipelines\": [\n    {\n      \"id\": 1,\n      \"name\": \"My Pipeline\",\n      \"description\": \"A very cool pipeline\",\n      \"orderWeight\": 1000,\n      \"stages\": [\n        {\n          \"id\": 10,\n          \"name\": \"Prospect\",\n          \"description\": \"Prospective deals\",\n          \"orderWeight\": 1000\n        },\n        {\n          \"id\": 11,\n          \"name\": \"In Progress\",\n          \"description\": \"Deals in progress\",\n          \"orderWeight\": 2000\n        }\n      ]\n    }\n  ]\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_metadata": {
+                      "type": "object",
+                      "properties": {
+                        "collection": {
+                          "type": "string",
+                          "example": "pipelines"
+                        },
+                        "offset": {
+                          "type": "integer",
+                          "example": 0,
+                          "default": 0
+                        },
+                        "limit": {
+                          "type": "integer",
+                          "example": 10,
+                          "default": 0
+                        },
+                        "total": {
+                          "type": "integer",
+                          "example": 1,
+                          "default": 0
+                        }
+                      }
+                    },
+                    "pipelines": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "example": 1,
+                            "default": 0
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "My Pipeline"
+                          },
+                          "description": {
+                            "type": "string",
+                            "example": "A very cool pipeline"
+                          },
+                          "orderWeight": {
+                            "type": "integer",
+                            "example": 1000,
+                            "default": 0
+                          },
+                          "stages": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "integer",
+                                  "example": 10,
+                                  "default": 0
+                                },
+                                "name": {
+                                  "type": "string",
+                                  "example": "Prospect"
+                                },
+                                "description": {
+                                  "type": "string",
+                                  "example": "Prospective deals"
+                                },
+                                "orderWeight": {
+                                  "type": "integer",
+                                  "example": 1000,
+                                  "default": 0
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
