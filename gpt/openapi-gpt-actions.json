@@ -1,0 +1,3249 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Follow Up Boss (fub-mcp trimmed for Custom GPT Actions)",
+    "description": "A curated ~24-operation subset of the Follow Up Boss CRM API for on-the-go use as a ChatGPT Custom GPT Action. Each user authenticates with their OWN Follow Up Boss personal API key (HTTP Basic auth) \u2014 this schema is not tied to any single account. See gpt/SETUP.md for exact auth setup steps, and gpt/gpt-instructions.md for the GPT's behavior instructions (defaults, gotchas, custom field handling).",
+    "version": "0.1.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.followupboss.com/v1"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    }
+  },
+  "security": [
+    {
+      "basicAuth": []
+    }
+  ],
+  "paths": {
+    "/people": {
+      "get": {
+        "summary": "/people",
+        "description": "Search for people.",
+        "operationId": "people-get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "The ID(s) of a person or people. (e.g., \"123,456\")",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "The sort order, can be one of the following: `id`, `created`, `updated`, `name`, `firstName`, `lastName`, `price`, `stage`, `lastActivity`, `lastCommunication`, `lastReceivedEmail`, `lastSentEmail`, `lastEmail`, `emailsReceived`, `emailsSent`, `lastIncomingCall`, `lastOutgoingCall`, `lastCall`, `firstCall`, `callsIncoming`, `callsOutgoing`, `callsDuration`, `lastReceivedText`, `lastSentText`, `lastText`, `lastLeadActivity`, `lastEmEventActivity`, `lastIdxVisit`, `textsReceived`, `textsSent`, `propertiesViewed`, `propertiesSaved`, `pagesViewed` or `nextTask`. <br /><br />Custom Fields (e.g. `customClosePrice`) can also be used in sorting.",
+            "schema": {
+              "type": "string",
+              "default": "created"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of results to return. Max 100.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Specifies the number of rows to skip, before starting to return results.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Comma separated list of fields to return or use `allFields` to return all fields. (e.g., `firstName,lastName,timeframeId,timeframeUpdated,timeframeStatus,customFieldName`).  Note: All custom fields should be prefixed with `custom` (i.e. customBirthday, customField).   <br><br> Special values include `allCustom` (returns all custom fields) and `allFields` (returns all fields, including custom fields).  <br><br> When using the `fields` parameter to filter the response, the `id` field will be included (even when not specified explicitly).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lastActivityAfter",
+            "in": "query",
+            "description": "Search for last activity after a given time. (e.g., \"2016-11-23 01:02:03\")",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lastActivityBefore",
+            "in": "query",
+            "description": "Search for last activity before a given time. (e.g., \"2016-11-23 01:02:03\")",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Search for person with a name like what is given. (e.g., If you search for \"drew\", it might return a contact like \"Andrew\".)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "firstName",
+            "in": "query",
+            "description": "Search for person with a first name like what is given. (e.g., If you search for \"drew\", it might return a contact like \"Andrew\".)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lastName",
+            "in": "query",
+            "description": "Search for person with a last name like what is given. (e.g., If you search for \"drew\", it might return a contact like \"Andrew\".)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "Search for a person by email address.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "phone",
+            "in": "query",
+            "description": "Search for a person by phone number.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "stage",
+            "in": "query",
+            "description": "Search for person by stage name. (e.g., \"Lead\" or \"Trash\". See [stages API endpoint](ref:stages-get) for available stages.)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "source",
+            "in": "query",
+            "description": "Search for a person by lead source.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "assignedTo",
+            "in": "query",
+            "description": "Search for a person by the user that is assigned to them. (e.g., Passing \"William Riker\" would return any person assigned to them.)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "assignedUserId",
+            "in": "query",
+            "description": "Search for people by the assigned user ID.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "assignedPondId",
+            "in": "query",
+            "description": "Search for a person by the assigned pond id.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "assignedLenderName",
+            "in": "query",
+            "description": "Search for people by the assigned lender name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "assignedLenderId",
+            "in": "query",
+            "description": "Search for people by the assigned lender user ID.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "contacted",
+            "in": "query",
+            "description": "Search for people by whether or not they have been contacted.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "priceAbove",
+            "in": "query",
+            "description": "Search for people who have specified a price above a given value.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "priceBelow",
+            "in": "query",
+            "description": "Search for people who have specified a price below a given value.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "smartListId",
+            "in": "query",
+            "description": "Search for people that match a smart list with given ID.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "includeTrash",
+            "in": "query",
+            "description": "Set whether to include people in the \"trash\" stage. (By default responses from /people will not include any people with a \"trash\" stage.)",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "includeUnclaimed",
+            "in": "query",
+            "description": "Set to include unclaimed leads offered to the current user.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "tags",
+            "in": "query",
+            "description": "Search for people that match one or more tags. (e.g., \"Foo,Bar\" will match contacts with tags that include Foo OR Bar.)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "custom*",
+            "in": "query",
+            "description": "You can include any of your Custom Fields in the request, these must be prefixed with \"custom\".  For example, if you have a *Closing Date* custom field, the JSON key for that field will be `customClosingDate`.  See [Custom Fields](doc:custom-fields-get) for more about Custom Fields.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"_metadata\": {\n    \"collection\": \"people\",\n    \"offset\": 0,\n    \"limit\": 10,\n    \"total\": 35\n  },\n  \"people\": [\n    {\n      \"id\": 10763,\n      \"created\": \"2013-10-31T23:04:30Z\",\n      \"updated\": \"2014-06-27T13:11:23Z\",\n      \"createdVia\": \"API\",\n      \"lastActivity\": \"2014-06-27T13:11:23Z\",\n      \"name\": \"Tom Minch\",\n      \"firstName\": \"Tom\",\n      \"lastName\": \"Minch\",\n      \"stage\": \"Lead\",\n      \"source\": \"MyAwesomeWebsite.com\",\n      \"sourceUrl\": \"\",\n      \"contacted\": 0,\n      \"price\": 500000,\n      \"timeframeId\": 1,\n      \"assignedLenderId\": null,\n      \"assignedLenderName\": null,\n      \"assignedUserId\": 8,\n      \"assignedTo\": \"Agent White\",\n      \"collaborators\": [\n        {\n           \"id\": 8,\n           \"name\": \"Tom Minch\",\n           \"assigned\": true,\n           \"role\": \"Broker\"\n         }\n      ],\n      \"tags\": [ \"Los Angeles\", \"90003\", \"2014 May\" ],\n      \"emails\": [\n        {\n          \"value\": \"tom.minch@example.com\",\n          \"type\": \"home\",\n          \"isPrimary\": 1,\n          \"status\": \"Valid\"\n        }\n      ],\n      \"phones\": [\n        {\n          \"type\": \"home\",\n          \"value\": \"555-555-1234\",\n          \"status\": \"Invalid\"\n        }\n      ],\n      \"addresses\": [\n        {\n          \"type\": \"work\",\n          \"street\": \"322 S Broadway\",\n          \"city\": \"Los Angeles\",\n          \"state\": \"CA\",\n          \"code\": \"90003\",\n          \"country\": \"United States\"\n        }\n      ],\n      \"picture\": {\n        \"small\": \"https://example.com/pictures/89615e1a7fe.jpg\"\n      }\n    }\n    ...\n  ]\n}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "post": {
+        "summary": "/people",
+        "description": "Manually add a new person.",
+        "operationId": "people-post",
+        "parameters": [
+          {
+            "name": "deduplicate",
+            "in": "query",
+            "description": "By default new people will be created even if there are existing people with the same email or phone. By passing true, deduplication logic will be used and, if a person is found, a 200 response will be returned along with response data for that existing person. No changes will be made based on the payload.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "createdAt": {
+                    "type": "string",
+                    "description": "Will set the creation time for the person, if wanting to create historical leads.",
+                    "format": "date"
+                  },
+                  "firstName": {
+                    "type": "string",
+                    "description": "The first/given name of the person."
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "description": "The last/family name of the person."
+                  },
+                  "stage": {
+                    "type": "string",
+                    "description": "The stage the person is in. (e.g., \"Lead\" or \"Trash\". See [stage API endpoint](ref:stages-get) for more options.)",
+                    "default": "Lead"
+                  },
+                  "source": {
+                    "type": "string",
+                    "description": "The source of the lead."
+                  },
+                  "sourceUrl": {
+                    "type": "string",
+                    "description": "This is a direct link to the information about a person at the lead provider."
+                  },
+                  "contacted": {
+                    "type": "boolean",
+                    "description": "Whether the person has been contacted or not."
+                  },
+                  "price": {
+                    "type": "integer",
+                    "description": "The price of the property of the person's first inquiry, or the estimated sell/buy price for this person.",
+                    "format": "int32"
+                  },
+                  "assignedTo": {
+                    "type": "string",
+                    "description": "Full name of the agent assigned to this person."
+                  },
+                  "assignedUserId": {
+                    "type": "integer",
+                    "description": "ID of the agent assigned to this person.",
+                    "format": "int32"
+                  },
+                  "assignedPondId": {
+                    "type": "integer",
+                    "description": "ID of the pond assigned to this person.",
+                    "format": "int32"
+                  },
+                  "assignedLenderName": {
+                    "type": "string",
+                    "description": "Full name of the lender assigned to this person."
+                  },
+                  "assignedLenderId": {
+                    "type": "integer",
+                    "description": "ID of the lender assigned to this person.",
+                    "format": "int32"
+                  },
+                  "emails": {
+                    "type": "array",
+                    "description": "A list of email addresses associated with the person. (Specify type and value, isPrimary is not expected. The first email in the list will be the primary email address.)",
+                    "items": {
+                      "properties": {
+                        "value": {
+                          "type": "string",
+                          "description": "The email address."
+                        },
+                        "type": {
+                          "type": "string",
+                          "description": "The type of email address (e.g., \"work\", \"home\")"
+                        },
+                        "isPrimary": {
+                          "type": "boolean",
+                          "description": "Sets whether the email address is the primary address.",
+                          "default": false
+                        }
+                      },
+                      "required": [
+                        "value"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "phones": {
+                    "type": "array",
+                    "description": "A list of phone numbers associated with the person. (Specify type and value, isPrimary is not expected. The first phone in the list will be the primary phone number.)",
+                    "items": {
+                      "properties": {
+                        "value": {
+                          "type": "string",
+                          "description": "The phone number. (e.g., 888-555-1234)"
+                        },
+                        "isPrimary": {
+                          "type": "boolean",
+                          "description": "Sets whether this is the primary phone number.",
+                          "default": false
+                        },
+                        "type": {
+                          "type": "string",
+                          "description": "Type of number (e.g., \"mobile\", \"home\", \"fax\", etc.)"
+                        }
+                      },
+                      "required": [
+                        "value"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "addresses": {
+                    "type": "array",
+                    "description": "A list of addresses associated with the person. (These are the addresses where this person can be contacted, it is not the address of a property this person may be interested in selling or buying).",
+                    "items": {
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "description": "The address type. (e.g., \"home\", \"work\", \"mailing\", \"investment\", etc.)",
+                          "default": "home"
+                        },
+                        "street": {
+                          "type": "string",
+                          "description": "Street address. (e.g., \"3595 South Higuera St., Suite B\")"
+                        },
+                        "city": {
+                          "type": "string",
+                          "description": "City name."
+                        },
+                        "state": {
+                          "type": "string",
+                          "description": "Abbreviated state code. (e.g., \"CA\", \"NY\", etc.)"
+                        },
+                        "code": {
+                          "type": "string",
+                          "description": "Zipcode. (As a string, not a number.)"
+                        },
+                        "country": {
+                          "type": "string",
+                          "description": "Country name. (e.g., \"United States\", \"Japan\", etc.)"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "tags": {
+                    "type": "array",
+                    "description": "A list of tags applied to the person.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "background": {
+                    "type": "string",
+                    "description": "Background information on the person. (Can be a multi-line string.)"
+                  },
+                  "collaborators": {
+                    "type": "array",
+                    "description": "List of user ids to set as collaborators on this person. Not including a collaborator's user id in this array will remove them as a collaborator.",
+                    "items": {
+                      "type": "integer",
+                      "format": "int32"
+                    }
+                  },
+                  "custom*": {
+                    "type": "string",
+                    "description": "You can include any of your Custom Fields in the request, these must be prefixed with \"custom\".  For example, if you have a *Closing Date* custom field, the JSON key for that field will be `customClosingDate`.  See [Custom Fields](doc:custom-fields-get) for more about Custom Fields."
+                  },
+                  "timeframeId": {
+                    "type": "integer",
+                    "description": "ID of the timeframe to move (Refer to the /timeframes endpoint for valid values of timeframeId.)",
+                    "format": "int32"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/people/{id}": {
+      "get": {
+        "summary": "/people/:id",
+        "description": "Retrieve a person by id.",
+        "operationId": "people-id-get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the person.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "required": true
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Comma separated list of fields to return. (e.g., `firstName,lastName,timeframeId,timeframeUpdated,timeframeStatus,customFieldName`) <br><br> Special values include `allCustom` (returns all custom fields) and `allFields` (returns all fields, including custom fields).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"id\": 14412,\n  \"created\": \"2016-03-31T16:42:27Z\",\n  \"updated\": \"2016-11-17T03:44:00Z\",\n  \"createdVia\": \"API\",\n  \"lastActivity\": \"2016-11-17T05:01:02Z\",\n  \"name\": \"William Riker\",\n  \"firstName\": \"William\",\n  \"lastName\": \"Riker\",\n  \"prequalified\": false,\n  \"stage\": \"Lead\",\n  \"stageId\": 2,\n  \"source\": \"<unspecified>\",\n  \"sourceUrl\": \"\",\n  \"contacted\": 1,\n  \"price\": 310000,\n  \"assignedLenderId\": null,\n  \"assignedLenderName\": null,\n  \"assignedUserId\": 1,\n  \"assignedTo\": \"Gerald Leenerts\",\n  \"collaborators\": [\n    {\n       \"id\": 1,\n       \"name\": \"Gerald Leenerts\",\n       \"assigned\": true,\n       \"role\": \"Broker\"\n    }\n  ],\n  \"tags\": [\n    \"star trek\",\n  ],\n  \"emails\": [\n    {\n      \"value\": \"example@example.com\",\n      \"type\": \"home\",\n      \"isPrimary\": 1,\n      \"status\": \"Valid\",\n    },\n    {\n      \"value\": \"mobile@example.com\",\n      \"type\": \"work\",\n      \"isPrimary\": 0,\n      \"status\": \"Valid\",\n    }\n  ],\n  \"phones\": [\n    {\n      \"value\": \"2345678901\",\n      \"type\": \"home\",\n      \"isPrimary\": 1,\n      \"status\": \"Invalid\",\n    },\n    {\n      \"value\": \"2345678902\",\n      \"type\": \"mobile\",\n      \"isPrimary\": 0,\n      \"status\": \"Not Validated\",\n    }\n  ],\n  \"addresses\": [],\n  \"picture\": {\n    \"small\": \"http://vignette1.wikia.nocookie.net/memoryalpha/images/4/4f/Riker_orders_Worf_to_fire_on_the_Borg_cube.jpg/revision/latest?cb=20130213024734&path-prefix=en\"\n  },\n  \"timeframeId\": 1\n}"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "put": {
+        "summary": "/people/:id",
+        "description": "Update a person by id.",
+        "operationId": "people-id-put",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the person.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "required": true
+          },
+          {
+            "name": "mergeTags",
+            "in": "query",
+            "description": "If set to true, this will merge the tags sent in the `tags` argument with the current list of tags. By default, it overwrites the existing tags.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string",
+                    "description": "The first/given name of the person."
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "description": "The last/family name of the person."
+                  },
+                  "stage": {
+                    "type": "string",
+                    "description": "The stage the person is in. (e.g., \"Lead\" or \"Trash\". See [stage API endpoint](ref:stages-get) for more options.)",
+                    "default": "Lead"
+                  },
+                  "contacted": {
+                    "type": "boolean",
+                    "description": "Whether the person has been contacted. (**Note**: Changing the `contacted` field to `true` will pause action plans.)"
+                  },
+                  "price": {
+                    "type": "integer",
+                    "description": "The price of the property of the person's first inquiry, or the estimated sell/buy price for this person.",
+                    "format": "int32"
+                  },
+                  "assignedTo": {
+                    "type": "string",
+                    "description": "Full name of the agent assigned to this person."
+                  },
+                  "assignedUserId": {
+                    "type": "integer",
+                    "description": "ID of the agent assigned to this person.",
+                    "format": "int32"
+                  },
+                  "assignedPondId": {
+                    "type": "integer",
+                    "description": "ID of the pond assigned to this person.",
+                    "format": "int32"
+                  },
+                  "assignedLenderName": {
+                    "type": "string",
+                    "description": "Full name of the lender assigned to this person."
+                  },
+                  "assignedLenderId": {
+                    "type": "integer",
+                    "description": "ID of the lender assigned to this person.",
+                    "format": "int32"
+                  },
+                  "emails": {
+                    "type": "array",
+                    "description": "A list of email addresses associated with the person.",
+                    "items": {
+                      "properties": {
+                        "value": {
+                          "type": "string",
+                          "description": "The email address."
+                        },
+                        "type": {
+                          "type": "string",
+                          "description": "The type of email address (e.g., \"work\", \"home\")"
+                        },
+                        "isPrimary": {
+                          "type": "boolean",
+                          "description": "Sets whether the email address is the primary address.",
+                          "default": false
+                        }
+                      },
+                      "required": [
+                        "value"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "phones": {
+                    "type": "array",
+                    "description": "A list of phone numbers associated with the person.",
+                    "items": {
+                      "properties": {
+                        "value": {
+                          "type": "string",
+                          "description": "The phone number. (e.g., 888-555-1234)"
+                        },
+                        "isPrimary": {
+                          "type": "boolean",
+                          "description": "Sets whether this is the primary phone number.",
+                          "default": false
+                        },
+                        "type": {
+                          "type": "string",
+                          "description": "Type of number (e.g., \"mobile\", \"home\", \"fax\", etc.)"
+                        }
+                      },
+                      "required": [
+                        "value"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "addresses": {
+                    "type": "array",
+                    "description": "A list of addresses associated with the person. (This is the address where this person can be contacted, it is not the address of a property this person may be interested in selling or buying).",
+                    "items": {
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "description": "The address type. (e.g., \"home\", \"work\", \"mailing\", \"investment\", etc.)",
+                          "default": "home"
+                        },
+                        "street": {
+                          "type": "string",
+                          "description": "Street address. (e.g., \"3595 South Higuera St., Suite B\")"
+                        },
+                        "city": {
+                          "type": "string",
+                          "description": "City name."
+                        },
+                        "state": {
+                          "type": "string",
+                          "description": "Abbreviated state code. (e.g., \"CA\", \"NY\", etc.)"
+                        },
+                        "code": {
+                          "type": "string",
+                          "description": "Zipcode. (As a string, not a number.)"
+                        },
+                        "country": {
+                          "type": "string",
+                          "description": "Country name. (e.g., \"United States\", \"Japan\", etc.)"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "tags": {
+                    "type": "array",
+                    "description": "A list of tags applied to the person. **This list will overwrite any existing tags for the person.** (To merge the tags passed with any existing tags,set the `mergeTags` query parameter in your request to true.)",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "background": {
+                    "type": "string",
+                    "description": "Background information on the person. (Can be a multi-line string.)"
+                  },
+                  "custom*": {
+                    "type": "string",
+                    "description": "You can include any of your Custom Fields in the request, these must be prefixed with \"custom\".  For example, if you have a *Closing Date* custom field, the JSON key for that field will be `customClosingDate`.  See [Custom Fields](doc:custom-fields-get) for more about Custom Fields."
+                  },
+                  "timeframeId": {
+                    "type": "integer",
+                    "description": "ID of the timeframe to move (Refer to the /timeframes endpoint for valid values of timeframeId.)",
+                    "format": "int32"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/people/checkDuplicate": {
+      "get": {
+        "summary": "/people/checkDuplicate",
+        "description": "Check whether a person exists in Follow Up Boss.",
+        "operationId": "people-checkduplicate",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "description": "The email address to search for.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "phone",
+            "in": "query",
+            "description": "The phone number to search for.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"found\": true,\n  \"matchedBy\": \"email\",\n  \"assignedTo\": \"Agent Smith\"\n}"
+                  },
+                  "OK (not found)": {
+                    "value": "{\"found\": false}"
+                  }
+                },
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "found": {
+                          "type": "boolean",
+                          "example": true,
+                          "default": true
+                        },
+                        "matchedBy": {
+                          "type": "string",
+                          "example": "email"
+                        },
+                        "assignedTo": {
+                          "type": "string",
+                          "example": "Agent Smith"
+                        }
+                      }
+                    },
+                    {
+                      "title": "OK (not found)",
+                      "type": "object",
+                      "properties": {
+                        "found": {
+                          "type": "boolean",
+                          "example": false,
+                          "default": true
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/notes": {
+      "post": {
+        "summary": "/notes",
+        "description": "Add a note.",
+        "operationId": "notes-post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "personId"
+                ],
+                "properties": {
+                  "personId": {
+                    "type": "integer",
+                    "description": "The ID of a person.",
+                    "format": "int32"
+                  },
+                  "subject": {
+                    "type": "string",
+                    "description": "Gives a note a title or subject."
+                  },
+                  "body": {
+                    "type": "string",
+                    "description": "The content of the note."
+                  },
+                  "isHtml": {
+                    "type": "boolean",
+                    "description": "If enabled, will render the HTML tags contained within the body on the Follow Up Boss user interface."
+                  }
+                }
+              },
+              "examples": {
+                "JSON Example": {
+                  "value": {
+                    "personId": 12235,
+                    "subject": "Some note subject",
+                    "body": "This is the content of the note",
+                    "isHtml": 0
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "get": {
+        "summary": "/notes (undocumented)",
+        "description": "List notes, optionally filtered by person via personId. NOT in FUB's published docs (only GET /notes/{id} is documented) but confirmed working against the live API. Paginates via a next cursor, not offset.",
+        "operationId": "notes-list-undocumented",
+        "parameters": [
+          {
+            "name": "personId",
+            "in": "query",
+            "required": false,
+            "description": "Only return notes for this person ID.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Number of results to return. Max 100.",
+            "schema": {
+              "type": "integer",
+              "default": 100
+            }
+          },
+          {
+            "name": "next",
+            "in": "query",
+            "required": false,
+            "description": "Cursor from a previous response's _metadata.next.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/notes/{id}": {
+      "get": {
+        "summary": "/notes/:id",
+        "description": "Retrieve a note by id.",
+        "operationId": "notes-id-get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the note.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "required": true
+          },
+          {
+            "name": "includeThreadedReplies",
+            "in": "query",
+            "description": "When set to true, will include threaded replies attached to the note. Replies may include HTML tags in their bodies.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "includeReactions",
+            "in": "query",
+            "description": "When set to true, will include the reactions that have been left on the note (as well as the replies if those have also been requested). Reactions are keyed by the emoji reaction. The value is an array of user IDs who have left that reaction.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"id\": 12345,\n    \"created\": \"2024-01-01T00:00:00Z\",\n    \"updated\": \"2024-01-01T00:00:00Z\",\n    \"createdById\": 1,\n    \"updatedById\": 1,\n    \"createdBy\": \"Mark Hamill\",\n    \"updatedBy\": \"Mark Hamill\",\n    \"personId\": 15,\n    \"showContent\": true,\n    \"subject\": \"\",\n    \"body\": \"Hello team!\",\n    \"type\": \"\",\n    \"isHtml\": false,\n    \"actionPlanId\": null,\n    \"isExternal\": false,\n    \"systemId\": 1,\n    \"systemName\": \"My System\",\n    \"replies\": [\n        {\n          \"id\": 100,\n          \"refId\": 12345,\n          \"refType\": \"Note\",\n          \"createdById\": 1,\n          \"createdBy\": \"Mark Hamill\",\n          \"created\": \"2024-01-01T00:00:00Z\",\n          \"updated\": \"2024-01-01T00:00:00Z\",\n          \"body\": \"Hello world!\",\n          \"starred\": false,\n          \"reactions\": {\n            \"\ud83d\udc4d\": [5],\n            \"\ud83d\udc7e\": [2]\n        \t]\n\t\t\t\t},\n        {\n          \"id\": 107,\n          \"refId\": 12345,\n          \"refType\": \"Note\",\n          \"createdById\": 2,\n          \"createdBy\": \"Carrie Fisher\",\n          \"created\": \"2024-01-02T00:00:00Z\",\n          \"updated\": \"2024-01-02T00:00:00Z\",\n          \"body\": \"Greetings!\",\n          \"starred\": false,\n          \"reactions\": {\n            \"\ud83d\ude01\": [4, 1, 3],\n            \"\ud83d\udc4b\": [1]\n        \t]\n\t\t\t\t},\n    ],\n    \"reactions\": {\n        \"\ud83d\uddfc\": [3]\n    }\n}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/tasks": {
+      "get": {
+        "summary": "/tasks",
+        "description": "Get a list of tasks.",
+        "operationId": "tasks-get",
+        "parameters": [
+          {
+            "name": "personId",
+            "in": "query",
+            "description": "Find tasks by a person's id.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "assignedTo",
+            "in": "query",
+            "description": "Find tasks assigned to a specific user using their full name.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "assignedUserId",
+            "in": "query",
+            "description": "Find tasks assigned to a specific user by id.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Find tasks where the name is like what you pass in. (e.g., \"world\" would find a task named \"hello world\")",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Find tasks by the following types: `Follow Up`, `Call`, `Email`, `Text`, `Appointment`, `Showing`, `Closing`, `Open House` or `Thank You`. (Note: A comma separated list of types is accepted.)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "isCompleted",
+            "in": "query",
+            "description": "Find tasks that have been completed or not completed.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "due",
+            "in": "query",
+            "description": "Find tasks that fall into the following ranges: `today`, `overdue` and `upcoming`.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dueStart",
+            "in": "query",
+            "description": "Finds tasks that are due from this time forward.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dueEnd",
+            "in": "query",
+            "description": "Find tasks that are due from this time and before.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"_metadata\": {\n    \"collection\": \"tasks\",\n    \"offset\": 0,\n    \"limit\": 1,\n    \"total\": 126\n  },\n  \"tasks\": [\n    {\n      \"id\": 4066,\n      \"created\": \"2016-12-07T15:50:47Z\",\n      \"updated\": \"2016-12-07T15:50:47Z\",\n      \"completed\": \"2017-01-24T17:20:49Z\",\n      \"createdBy\": \"Gerald Leenerts\",\n      \"updatedBy\": \"Gerald Leenerts\",\n      \"personId\": 15013,\n      \"AssignedTo\": \"Gerald Leenerts\",\n      \"assignedUserId\": 1,\n      \"name\": \"Follow Up\",\n      \"type\": \"Follow Up\",\n      \"isCompleted\": 1,\n      \"dueDate\": \"2017-01-31\",\n      \"dueDateTime\": \"2017-01-31T21:00:00Z\",\n      \"externalTaskLink\": null,\n      \"externalCalendarId\": null,\n      \"remindSecondsBefore\": null,\n   \t},\n  ]\n}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "post": {
+        "summary": "/tasks",
+        "description": "Create a new task.",
+        "operationId": "tasks-post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "personId"
+                ],
+                "properties": {
+                  "personId": {
+                    "type": "integer",
+                    "description": "The id of the person this task is related to.",
+                    "format": "int32"
+                  },
+                  "assignedTo": {
+                    "type": "string",
+                    "description": "The full name of the agent to assign this task. (Note: This is required if `assignedUserId` is empty.)"
+                  },
+                  "assignedUserId": {
+                    "type": "integer",
+                    "description": "The id of the user to assign to this task. (Note: This is required if `assignedTo` is empty.)",
+                    "format": "int32"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the task."
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Type can be one of the following: `Follow Up`, `Call`, `Text`, `Email`, `Appointment`, `Showing`, `Closing`, `Open House` or `Thank You`",
+                    "enum": [
+                      "Follow Up",
+                      "Call",
+                      "Text",
+                      "Email",
+                      "Appointment",
+                      "Showing",
+                      "Closing",
+                      "Open House",
+                      "Thank You"
+                    ]
+                  },
+                  "isCompleted": {
+                    "type": "boolean",
+                    "description": "Sets whether the task is completed or not."
+                  },
+                  "dueDate": {
+                    "type": "string",
+                    "description": "Due date for this task in YYYY-MM-DD format.",
+                    "format": "date"
+                  },
+                  "dueDateTime": {
+                    "type": "string",
+                    "description": "Due date for this task with a time included that also supports timezone suffixes. (e.g., 2004-11-16T03:00:00 -05:00)",
+                    "format": "date"
+                  },
+                  "remindSecondsBefore": {
+                    "type": "integer",
+                    "description": "Set a reminder for the task to be sent via email and desktop notification. This is only available for tasks with a due time set.",
+                    "format": "int32"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"id\": 4066,\n  \"created\": \"2016-12-07T15:50:47Z\",\n  \"updated\": \"2016-12-07T15:50:47Z\",\n  \"createdBy\": \"Gerald Leenerts\",\n  \"updatedBy\": \"Gerald Leenerts\",\n  \"personId\": 15013,\n  \"AssignedTo\": \"Gerald Leenerts\",\n  \"assignedUserId\": 1,\n  \"name\": \"Follow Up\",\n  \"type\": \"Follow Up\",\n  \"isCompleted\": 0,\n  \"dueDate\": null,\n  \"dueDateTime\": null,\n  \"completed\": null,\n  \"person\": {\n    \"id\": 15013,\n    \"name\": \"William Riker\"\n  }\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "example": 4066,
+                      "default": 0
+                    },
+                    "created": {
+                      "type": "string",
+                      "example": "2016-12-07T15:50:47Z"
+                    },
+                    "updated": {
+                      "type": "string",
+                      "example": "2016-12-07T15:50:47Z"
+                    },
+                    "createdBy": {
+                      "type": "string",
+                      "example": "Gerald Leenerts"
+                    },
+                    "updatedBy": {
+                      "type": "string",
+                      "example": "Gerald Leenerts"
+                    },
+                    "personId": {
+                      "type": "integer",
+                      "example": 15013,
+                      "default": 0
+                    },
+                    "AssignedTo": {
+                      "type": "string",
+                      "example": "Gerald Leenerts"
+                    },
+                    "assignedUserId": {
+                      "type": "integer",
+                      "example": 1,
+                      "default": 0
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Follow Up"
+                    },
+                    "type": {
+                      "type": "string",
+                      "example": "Follow Up"
+                    },
+                    "isCompleted": {
+                      "type": "integer",
+                      "example": 0,
+                      "default": 0
+                    },
+                    "dueDate": {},
+                    "dueDateTime": {},
+                    "completed": {},
+                    "person": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "example": 15013,
+                          "default": 0
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "William Riker"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/tasks/{id}": {
+      "put": {
+        "summary": "/tasks/:id",
+        "description": "Update a task.",
+        "operationId": "tasks-id-put",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The id of the task to update.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "personId": {
+                    "type": "integer",
+                    "description": "The id of the person this task is related to.",
+                    "format": "int32"
+                  },
+                  "assignedTo": {
+                    "type": "string",
+                    "description": "The full name of the agent to assign to this task."
+                  },
+                  "assignedUserId": {
+                    "type": "integer",
+                    "description": "The id of the user to assign to this task.",
+                    "format": "int32"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the task."
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Type can be one of the following: `Follow Up`, `Call`, `Email`, `Appointment`, `Showing`, `Closing`, `Open House` or `Thank You`",
+                    "enum": [
+                      "Follow Up",
+                      "Call",
+                      "Text",
+                      "Email",
+                      "Appointment",
+                      "Showing",
+                      "Closing",
+                      "Open House",
+                      "Thank You"
+                    ]
+                  },
+                  "isCompleted": {
+                    "type": "boolean",
+                    "description": "Sets whether the task is completed or not."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"id\": 4066,\n  \"created\": \"2016-12-07T15:50:47Z\",\n  \"updated\": \"2016-12-07T15:50:47Z\",\n  \"completed:\" null,\n  \"createdBy\": \"Gerald Leenerts\",\n  \"updatedBy\": \"Gerald Leenerts\",\n  \"personId\": 15013,\n  \"AssignedTo\": \"Gerald Leenerts\",\n  \"assignedUserId\": 1,\n  \"name\": \"Follow Up\",\n  \"type\": \"Follow Up\",\n  \"isCompleted\": 0,\n  \"dueDate\": null,\n  \"dueDateTime\": null,\n  \"person\": {\n    \"id\": 15013,\n    \"name\": \"William Riker\"\n  }\n}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/appointments": {
+      "get": {
+        "summary": "/appointments",
+        "description": "Search for appointments.",
+        "operationId": "appointments-get",
+        "parameters": [
+          {
+            "name": "personId",
+            "in": "query",
+            "description": "Find all appointments related to a person. (Note: This can be comma separated list to search multiple users.)",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "description": "Find all appointments related to a user by id.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of results to return. Max 100.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Specifies the number of rows to skip before starting to return results.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "description": "Date and time representing the start of a date/time range for which to search (must be combined with the `end` argument).",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "description": "Date and time representing the end of a date/time range for which to search (must be combined with the `start` argument).",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n    \"_metadata\": {\n        \"collection\": \"appointments\",\n        \"offset\": 0,\n        \"limit\": 10,\n        \"total\": 1,\n        \"next\": null,\n        \"nextLink\": null\n    },\n    \"appointments\": [\n        {\n            \"id\": 123,\n            \"created\": \"2020-05-04T14:45:13Z\",\n            \"updated\": \"2020-05-04T14:45:13Z\",\n            \"createdById\": 1,\n            \"updatedById\": 1,\n            \"title\": \"Call mom\",\n            \"description\": \"Wish mom a happy Mother's Day\",\n            \"start\": \"2020-05-10T17:00:00Z\",\n            \"end\": \"2020-05-10T18:00:00Z\",\n            \"allDay\": false,\n            \"originFub\": true,\n            \"location\": \"\",\n            \"invitees\": [\n                {\n                    \"userId\": 1,\n                    \"personId\": null,\n                    \"name\": \"Tom Minch\",\n                    \"email\": \"tom@example.com\",\n                    \"picture\": \"https://placekitten.com/408/287\"\n                }\n            ],\n            \"typeId\": null,\n            \"type\": null,\n            \"outcomeId\": null,\n            \"outcome\": null,\n            \"externalEventLink\": null,\n            \"externalCalendarId\": null,\n            \"isEditable\": true,\n            \"detailsVisible\": true\n        }\n    ]\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_metadata": {
+                      "type": "object",
+                      "properties": {
+                        "collection": {
+                          "type": "string",
+                          "example": "appointments"
+                        },
+                        "offset": {
+                          "type": "integer",
+                          "example": 0,
+                          "default": 0
+                        },
+                        "limit": {
+                          "type": "integer",
+                          "example": 10,
+                          "default": 0
+                        },
+                        "total": {
+                          "type": "integer",
+                          "example": 1,
+                          "default": 0
+                        },
+                        "next": {},
+                        "nextLink": {}
+                      }
+                    },
+                    "appointments": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "example": 123,
+                            "default": 0
+                          },
+                          "created": {
+                            "type": "string",
+                            "example": "2020-05-04T14:45:13Z"
+                          },
+                          "updated": {
+                            "type": "string",
+                            "example": "2020-05-04T14:45:13Z"
+                          },
+                          "createdById": {
+                            "type": "integer",
+                            "example": 1,
+                            "default": 0
+                          },
+                          "updatedById": {
+                            "type": "integer",
+                            "example": 1,
+                            "default": 0
+                          },
+                          "title": {
+                            "type": "string",
+                            "example": "Call mom"
+                          },
+                          "description": {
+                            "type": "string",
+                            "example": "Wish mom a happy Mother's Day"
+                          },
+                          "start": {
+                            "type": "string",
+                            "example": "2020-05-10T17:00:00Z"
+                          },
+                          "end": {
+                            "type": "string",
+                            "example": "2020-05-10T18:00:00Z"
+                          },
+                          "allDay": {
+                            "type": "boolean",
+                            "example": false,
+                            "default": true
+                          },
+                          "originFub": {
+                            "type": "boolean",
+                            "example": true,
+                            "default": true
+                          },
+                          "location": {
+                            "type": "string",
+                            "example": ""
+                          },
+                          "invitees": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "userId": {
+                                  "type": "integer",
+                                  "example": 1,
+                                  "default": 0
+                                },
+                                "personId": {},
+                                "name": {
+                                  "type": "string",
+                                  "example": "Tom Minch"
+                                },
+                                "email": {
+                                  "type": "string",
+                                  "example": "tom@example.com"
+                                },
+                                "picture": {
+                                  "type": "string",
+                                  "example": "https://placekitten.com/408/287"
+                                }
+                              }
+                            }
+                          },
+                          "typeId": {},
+                          "type": {},
+                          "outcomeId": {},
+                          "outcome": {},
+                          "externalEventLink": {},
+                          "externalCalendarId": {},
+                          "isEditable": {
+                            "type": "boolean",
+                            "example": true,
+                            "default": true
+                          },
+                          "detailsVisible": {
+                            "type": "boolean",
+                            "example": true,
+                            "default": true
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "post": {
+        "summary": "/appointments",
+        "description": "Create an appointment.",
+        "operationId": "appointments-post",
+        "parameters": [
+          {
+            "name": "sendInvitation",
+            "in": "query",
+            "description": "Send an invitation email to invitees. (Note: If the \"appointment reminders\" is enabled, an SMS reminder will also be sent.)",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "title",
+                  "start",
+                  "end"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "Title of the appointment."
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Description of the appointment or event."
+                  },
+                  "invitees": {
+                    "type": "string",
+                    "description": "Array of users and/or people to invite to the appointment. (e.g., User object: `{userId: 1, name: \"Tom Minch\"}`, People object: `{personId: \"123\", name: \"John Q Customer\", email: \"johnq@example.com\"}`)",
+                    "format": "json"
+                  },
+                  "allDay": {
+                    "type": "boolean",
+                    "description": "Sets whether the appointment is an all day event or not.",
+                    "default": false
+                  },
+                  "start": {
+                    "type": "string",
+                    "description": "The beginning date and time of the appointment (in UTC, also supports time zone suffix)."
+                  },
+                  "end": {
+                    "type": "string",
+                    "description": "The ending date and time of the appointment (in UTC, also supports time zone suffix)."
+                  },
+                  "location": {
+                    "type": "string",
+                    "description": "The location or address of the appointment."
+                  },
+                  "createdById": {
+                    "type": "integer",
+                    "description": "The id of the user that created the appointment. (Note: This can only be set by admins, otherwise the currently logged in user's ID is used.)",
+                    "format": "int32"
+                  },
+                  "typeId": {
+                    "type": "integer",
+                    "description": "The Follow Up Boss appointment type identifier.",
+                    "format": "int32"
+                  },
+                  "outcomeId": {
+                    "type": "integer",
+                    "description": "The Follow Up Boss appointment outcome identifier.",
+                    "format": "int32"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n   \"id\":13854,\n   \"created\":\"2020-09-04T15:13:18Z\",\n   \"updated\":\"2020-09-04T15:13:18Z\",\n   \"createdById\":1,\n   \"updatedById\":1,\n   \"title\":\"Lunch\",\n   \"description\":\"Tom and John Q. are having lunch. Gotta try the new \\\"impossible\\\" burger\",\n   \"start\":\"2020-09-04T16:00:00Z\",\n   \"end\":\"2020-09-04T17:00:00Z\",\n   \"allDay\":false,\n   \"originFub\":true,\n   \"location\":\"\",\n   \"invitees\":[\n      {\n         \"userId\":1,\n         \"personId\":null,\n         \"name\":\"Tom Minch\",\n         \"email\":\"tom@example.com\",\n         \"picture\":\"https://placekitten.com/408/287\"\n      },\n      {\n         \"userId\":null,\n         \"personId\":44673,\n         \"name\":\"John Q Customer\",\n         \"email\":\"johnq@example.com\"\n      }\n   ],\n   \"typeId\": null,\n   \"type\": null,\n   \"outcomeId\": null,\n   \"outcome\": null,\n   \"externalEventLink\":null,\n   \"externalCalendarId\":null,\n   \"isEditable\":true,\n   \"detailsVisible\":true\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "example": 13854,
+                      "default": 0
+                    },
+                    "created": {
+                      "type": "string",
+                      "example": "2020-09-04T15:13:18Z"
+                    },
+                    "updated": {
+                      "type": "string",
+                      "example": "2020-09-04T15:13:18Z"
+                    },
+                    "createdById": {
+                      "type": "integer",
+                      "example": 1,
+                      "default": 0
+                    },
+                    "updatedById": {
+                      "type": "integer",
+                      "example": 1,
+                      "default": 0
+                    },
+                    "title": {
+                      "type": "string",
+                      "example": "Lunch"
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Tom and John Q. are having lunch. Gotta try the new \"impossible\" burger"
+                    },
+                    "start": {
+                      "type": "string",
+                      "example": "2020-09-04T16:00:00Z"
+                    },
+                    "end": {
+                      "type": "string",
+                      "example": "2020-09-04T17:00:00Z"
+                    },
+                    "allDay": {
+                      "type": "boolean",
+                      "example": false,
+                      "default": true
+                    },
+                    "originFub": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "location": {
+                      "type": "string",
+                      "example": ""
+                    },
+                    "invitees": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "userId": {
+                            "type": "integer",
+                            "example": 1,
+                            "default": 0
+                          },
+                          "personId": {},
+                          "name": {
+                            "type": "string",
+                            "example": "Tom Minch"
+                          },
+                          "email": {
+                            "type": "string",
+                            "example": "tom@example.com"
+                          },
+                          "picture": {
+                            "type": "string",
+                            "example": "https://placekitten.com/408/287"
+                          }
+                        }
+                      }
+                    },
+                    "typeId": {},
+                    "type": {},
+                    "outcomeId": {},
+                    "outcome": {},
+                    "externalEventLink": {},
+                    "externalCalendarId": {},
+                    "isEditable": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "detailsVisible": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/deals": {
+      "get": {
+        "summary": "/deals",
+        "description": "Search for deals.",
+        "operationId": "deals-get",
+        "parameters": [
+          {
+            "name": "pipelineId",
+            "in": "query",
+            "description": "Return deals for a specific pipeline only.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "description": "Return a list of deals for a specific user.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "personId",
+            "in": "query",
+            "description": "Return a list of deals for a specific person.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "description": "Set to `1` to include deals with a status of `Deleted` in the results.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "includeArchived",
+            "in": "query",
+            "description": "Set to `1` to include deals with a status of `Archived` in the results.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Only return deals with a status of `Active`, `Archived`, or `Deleted`.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "Active",
+                "Archived",
+                "Deleted"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"_metadata\": {\n    \"collection\": \"deals\",\n    \"offset\": 0,\n    \"limit\": 10,\n    \"total\": 1,\n    \"totalByStageId\": {\n      \"5\": 1\n    }\n  },\n  \"deals\": [\n    {\n      \"pipelineId\": 100,\n      \"stageId\": 5,\n      \"enteredStageAt\": \"2017-04-14T18:31:20Z\",\n      \"id\": 2146,\n      \"name\": \"adding deal\",\n      \"type\": 0,\n      \"status\": \"Active\",\n      \"price\": 216000,\n      \"createdAt\": \"2017-04-14T18:31:19Z\",\n      \"orderWeight\": 6000,\n      \"description\": \"A deal for an example\",\n      \"projectedCloseDate\": null,\n      \"people\": [\n        {\n          \"id\": 10,\n          \"name\": \"Yolanda Smith\",\n          \"avatar\": \"\"\n        }\n      ],\n      \"users\": [\n        {\n          \"id\": 1,\n          \"name\": \"John Smith\"\n        }\n      ],\n      \"customField1\": \"A sample custom field.\",\n      \"customField2\": \"2021-04-01T18:48:19Z\",\n      \"customField3\": 3,\n      \"customField4\": \"A sample dropdown selection.\",\n      \"agentCommission\": 50,\n  \t\t\"teamCommission\": 50\n    },\n  ]\n}"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "post": {
+        "summary": "/deals",
+        "description": "Add a deal.",
+        "operationId": "deals-post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "stageId"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the deal."
+                  },
+                  "stageId": {
+                    "type": "integer",
+                    "description": "The stage that this deal should be assigned to.",
+                    "format": "int32"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Description of the deal."
+                  },
+                  "peopleIds": {
+                    "type": "array",
+                    "description": "A list of person ids that should be part of this deal.",
+                    "items": {
+                      "type": "integer",
+                      "format": "int32"
+                    }
+                  },
+                  "userIds": {
+                    "type": "array",
+                    "description": "A list of user ids that should be part of this deal.",
+                    "items": {
+                      "type": "integer",
+                      "format": "int32"
+                    }
+                  },
+                  "price": {
+                    "type": "integer",
+                    "description": "The price associated with this deal.",
+                    "format": "int32"
+                  },
+                  "projectedCloseDate": {
+                    "type": "string",
+                    "description": "Projected close date of this deal.",
+                    "format": "date"
+                  },
+                  "orderWeight": {
+                    "type": "integer",
+                    "description": "Set this value to enforce a specific sort order.",
+                    "format": "int32"
+                  },
+                  "commissionValue": {
+                    "type": "integer",
+                    "description": "Commission value to assign to this deal.",
+                    "format": "int32"
+                  },
+                  "agentCommission": {
+                    "type": "integer",
+                    "description": "Commission split for the agent split.",
+                    "format": "int32"
+                  },
+                  "teamCommission": {
+                    "type": "integer",
+                    "description": "Commission split for the team split.",
+                    "format": "int32"
+                  },
+                  "earnestMoneyDueDate": {
+                    "type": "string",
+                    "description": "Earnest Money Due Date for this deal.",
+                    "format": "date"
+                  },
+                  "mutualAcceptanceDate": {
+                    "type": "string",
+                    "description": "Mutual Acceptance Date for this deal.",
+                    "format": "date"
+                  },
+                  "dueDiligenceDate": {
+                    "type": "string",
+                    "description": "Due Diligence Date for this deal.",
+                    "format": "date"
+                  },
+                  "finalWalkThroughDate": {
+                    "type": "string",
+                    "description": "Final Walk Through Date for this deal.",
+                    "format": "date"
+                  },
+                  "possessionDate": {
+                    "type": "string",
+                    "description": "Possession Date for this deal.",
+                    "format": "date"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n\t\"name\": \"Deal\",\n\t\"description\": \"A seller deal\",\n\t\"stageId\": 1,\n  \"projectedCloseDate\": \"2022-01-27T05:00:00.000Z\",\n  \"earnestMoneyDueDate\": \"2022-01-22T05:00:00.000Z\",\n  \"mutualAcceptanceDate\": \"2022-01-23T05:00:00.000Z\",\n  \"dueDiligenceDate\": \"2022-01-17T05:00:00.000Z\",\n  \"finalWalkThroughDate\": \"2022-01-25T05:00:00.000Z\",\n  \"possessionDate\": \"2022-01-27T05:00:00.000Z\",\n  \"price\": 30,\n  \"peopleIds\": [\n    2,\n    5,\n    6\n  ],\n  \"userIds\": [\n    208,\n    210\n  ],\n  \"customField1\": \"A sample custom field.\",\n  \"customField2\": \"2021-04-01T18:48:19Z\",\n  \"customField3\": 3,\n  \"customField4\": \"A sample dropdown selection.\",  \n  \"agentCommission\": 50,\n  \"teamCommission\": 50\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "example": "Deal"
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "A seller deal"
+                    },
+                    "stageId": {
+                      "type": "integer",
+                      "example": 1,
+                      "default": 0
+                    },
+                    "projectedCloseDate": {
+                      "type": "string",
+                      "example": "2022-01-27T05:00:00.000Z"
+                    },
+                    "earnestMoneyDueDate": {
+                      "type": "string",
+                      "example": "2022-01-22T05:00:00.000Z"
+                    },
+                    "mutualAcceptanceDate": {
+                      "type": "string",
+                      "example": "2022-01-23T05:00:00.000Z"
+                    },
+                    "dueDiligenceDate": {
+                      "type": "string",
+                      "example": "2022-01-17T05:00:00.000Z"
+                    },
+                    "finalWalkThroughDate": {
+                      "type": "string",
+                      "example": "2022-01-25T05:00:00.000Z"
+                    },
+                    "possessionDate": {
+                      "type": "string",
+                      "example": "2022-01-27T05:00:00.000Z"
+                    },
+                    "price": {
+                      "type": "integer",
+                      "example": 30,
+                      "default": 0
+                    },
+                    "peopleIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "example": 2,
+                        "default": 0
+                      }
+                    },
+                    "userIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "example": 208,
+                        "default": 0
+                      }
+                    },
+                    "customField1": {
+                      "type": "string",
+                      "example": "A sample custom field."
+                    },
+                    "customField2": {
+                      "type": "string",
+                      "example": "2021-04-01T18:48:19Z"
+                    },
+                    "customField3": {
+                      "type": "integer",
+                      "example": 3,
+                      "default": 0
+                    },
+                    "customField4": {
+                      "type": "string",
+                      "example": "A sample dropdown selection."
+                    },
+                    "agentCommission": {
+                      "type": "integer",
+                      "example": 50,
+                      "default": 0
+                    },
+                    "teamCommission": {
+                      "type": "integer",
+                      "example": 50,
+                      "default": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/deals/{id}": {
+      "get": {
+        "summary": "/deals/:id",
+        "description": "Retrieve a deal by id.",
+        "operationId": "deals-id-get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The id of the deal.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n      \"pipelineId\": 100,\n      \"stageId\": 16,\n      \"enteredStageAt\": \"2017-04-14T18:31:20Z\",\n      \"id\": 2146,\n      \"name\": \"adding deal\",\n      \"type\": 0,\n      \"status\": \"Active\",\n      \"price\": 216000,\n      \"createdAt\": \"2017-04-14T18:31:19Z\",\n      \"orderWeight\": 6000,\n      \"description\": \"A deal for an example\",\n      \"projectedCloseDate\": null,\n      \"people\": [\n        {\n          \"id\": 10,\n          \"name\": \"Yolanda Smith\",\n          \"avatar\": \"\"\n        }\n      ],\n      \"users\": [\n    \t\t{\n     \t\t \t\"id\": 1,\n      \t\t\"name\": \"John Smith\"\n    \t\t}\n  \t\t],\n      \"customField1\": \"A sample custom field.\",\n      \"customField2\": \"2021-04-01T18:48:19Z\",\n      \"customField3\": 3,\n      \"customField4\": \"A sample dropdown selection.\",\n  \t\t\"agentCommission\": 50,\n  \t\t\"teamCommission\": 50\n    }"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "pipelineId": {
+                      "type": "integer",
+                      "example": 100,
+                      "default": 0
+                    },
+                    "stageId": {
+                      "type": "integer",
+                      "example": 16,
+                      "default": 0
+                    },
+                    "enteredStageAt": {
+                      "type": "string",
+                      "example": "2017-04-14T18:31:20Z"
+                    },
+                    "id": {
+                      "type": "integer",
+                      "example": 2146,
+                      "default": 0
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "adding deal"
+                    },
+                    "type": {
+                      "type": "integer",
+                      "example": 0,
+                      "default": 0
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "Active"
+                    },
+                    "price": {
+                      "type": "integer",
+                      "example": 216000,
+                      "default": 0
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "example": "2017-04-14T18:31:19Z"
+                    },
+                    "orderWeight": {
+                      "type": "integer",
+                      "example": 6000,
+                      "default": 0
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "A deal for an example"
+                    },
+                    "projectedCloseDate": {},
+                    "people": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "example": 10,
+                            "default": 0
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "Yolanda Smith"
+                          },
+                          "avatar": {
+                            "type": "string",
+                            "example": ""
+                          }
+                        }
+                      }
+                    },
+                    "users": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "example": 1,
+                            "default": 0
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "John Smith"
+                          }
+                        }
+                      }
+                    },
+                    "customField1": {
+                      "type": "string",
+                      "example": "A sample custom field."
+                    },
+                    "customField2": {
+                      "type": "string",
+                      "example": "2021-04-01T18:48:19Z"
+                    },
+                    "customField3": {
+                      "type": "integer",
+                      "example": 3,
+                      "default": 0
+                    },
+                    "customField4": {
+                      "type": "string",
+                      "example": "A sample dropdown selection."
+                    },
+                    "agentCommission": {
+                      "type": "integer",
+                      "example": 50,
+                      "default": 0
+                    },
+                    "teamCommission": {
+                      "type": "integer",
+                      "example": 50,
+                      "default": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "put": {
+        "summary": "/deals/:id",
+        "description": "Update a deal.",
+        "operationId": "deals-id-put",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The id of the deal.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the deal."
+                  },
+                  "stageId": {
+                    "type": "integer",
+                    "description": "The stage that this deal should be assigned to.",
+                    "format": "int32"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Description of the deal."
+                  },
+                  "peopleIds": {
+                    "type": "array",
+                    "description": "A list of person ids that should be part of this deal.",
+                    "items": {
+                      "type": "integer",
+                      "format": "int32"
+                    }
+                  },
+                  "userIds": {
+                    "type": "array",
+                    "description": "A list of user ids that should be part of this deal.",
+                    "items": {
+                      "type": "integer",
+                      "format": "int32"
+                    }
+                  },
+                  "price": {
+                    "type": "integer",
+                    "description": "The price associated with this deal.",
+                    "format": "int32"
+                  },
+                  "projectedCloseDate": {
+                    "type": "string",
+                    "description": "Projected close date of this deal.",
+                    "format": "date"
+                  },
+                  "commissionValue": {
+                    "type": "integer",
+                    "description": "Commission value to assign to this deal.",
+                    "format": "int32"
+                  },
+                  "agentCommision": {
+                    "type": "integer",
+                    "description": "Commission value for an agent split.",
+                    "format": "int32"
+                  },
+                  "teamComission": {
+                    "type": "integer",
+                    "description": "Commission value for a team split.",
+                    "format": "int32"
+                  },
+                  "earnestMoneyDueDate": {
+                    "type": "string",
+                    "description": "Earnest Money Due Date for this deal.",
+                    "format": "date"
+                  },
+                  "mutualAcceptanceDate": {
+                    "type": "string",
+                    "description": "Mutual Acceptance Date for this deal.",
+                    "format": "date"
+                  },
+                  "dueDiligenceDate": {
+                    "type": "string",
+                    "description": "Due Diligence Date for this deal.",
+                    "format": "date"
+                  },
+                  "finalWalkThroughDate": {
+                    "type": "string",
+                    "description": "Final Walk Through Date for this deal.",
+                    "format": "date"
+                  },
+                  "possessionDate": {
+                    "type": "string",
+                    "description": "Possession Date for this deal.",
+                    "format": "date"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n\t\"name\": \"New Deal\",\n\t\"stageId\": 2,\n  \"description\": \"The best deal\",\n  \"projectedCloseDate\": \"2001-01-02\",\n\t\"earnestMoneyDueDate\": \"2001-01-01T05:00:00.000Z\",\n  \"mutualAcceptanceDate\": \"2001-01-01T05:00:00.000Z\",\n  \"dueDiligenceDate\": \"2001-01-01T05:00:00.000Z\",\n  \"finalWalkThroughDate\": \"2001-01-01T05:00:00.000Z\",\n  \"possessionDate\": \"2001-01-01T05:00:00.000Z\",\n  \"price\": 30,\n  \"peopleIds\": [\n    2,\n    5,\n    6\n  ],\n  \"userIds\": [\n    208,\n    210\n  ],\n  \"customField1\": \"A sample custom field.\",\n  \"customField2\": \"2021-04-01T18:48:19Z\",\n  \"customField3\": 3,\n  \"customField4\": \"A sample dropdown selection.\",  \n  \"agentCommission\": 50,\n  \"teamCommission\": 50\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "example": "New Deal"
+                    },
+                    "stageId": {
+                      "type": "integer",
+                      "example": 2,
+                      "default": 0
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "The best deal"
+                    },
+                    "projectedCloseDate": {
+                      "type": "string",
+                      "example": "2001-01-02"
+                    },
+                    "earnestMoneyDueDate": {
+                      "type": "string",
+                      "example": "2001-01-01T05:00:00.000Z"
+                    },
+                    "mutualAcceptanceDate": {
+                      "type": "string",
+                      "example": "2001-01-01T05:00:00.000Z"
+                    },
+                    "dueDiligenceDate": {
+                      "type": "string",
+                      "example": "2001-01-01T05:00:00.000Z"
+                    },
+                    "finalWalkThroughDate": {
+                      "type": "string",
+                      "example": "2001-01-01T05:00:00.000Z"
+                    },
+                    "possessionDate": {
+                      "type": "string",
+                      "example": "2001-01-01T05:00:00.000Z"
+                    },
+                    "price": {
+                      "type": "integer",
+                      "example": 30,
+                      "default": 0
+                    },
+                    "peopleIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "example": 2,
+                        "default": 0
+                      }
+                    },
+                    "userIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "example": 208,
+                        "default": 0
+                      }
+                    },
+                    "customField1": {
+                      "type": "string",
+                      "example": "A sample custom field."
+                    },
+                    "customField2": {
+                      "type": "string",
+                      "example": "2021-04-01T18:48:19Z"
+                    },
+                    "customField3": {
+                      "type": "integer",
+                      "example": 3,
+                      "default": 0
+                    },
+                    "customField4": {
+                      "type": "string",
+                      "example": "A sample dropdown selection."
+                    },
+                    "agentCommission": {
+                      "type": "integer",
+                      "example": 50,
+                      "default": 0
+                    },
+                    "teamCommission": {
+                      "type": "integer",
+                      "example": 50,
+                      "default": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/customFields": {
+      "get": {
+        "summary": "/customFields",
+        "description": "List all custom fields.",
+        "operationId": "customfields-get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of results to return. Max 100.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Specifies the number of rows to skip, before starting to return results.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "label",
+            "in": "query",
+            "description": "Find custom field by label.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Sorts results based on the provided field name. Prepending the field with a minus sign (-) sorts the results in descending order.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "id",
+                "name",
+                "orderWeight"
+              ],
+              "default": "id (desc)"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"_metadata\": {\n    \"collection\": \"customfields\",\n    \"offset\": 0,\n    \"limit\": 10,\n    \"total\": \"4\"\n  },\n  \"customfields\": [\n    {\n      \"id\": 2,\n      \"label\": \"Birthday\",\n      \"name\": \"customBirthday\",\n      \"type\": \"date\",\n      \"isRecurring\": true\n    },\n    {\n      \"id\": 4,\n      \"label\": \"Facebook\",\n      \"name\": \"customFacebook\",\n      \"type\": \"text\"\n    },\n    {\n      \"id\": 6,\n      \"label\": \"Looking for\",\n      \"name\": \"customLookingFor\",\n      \"type\": \"dropdown\",\n      \"choices\": [\n          \"Apartment\",\n          \"Townhouse\",\n          \"Detached House\"\n      ]\n    },\n    {\n      \"id\": 7,\n      \"label\": \"Close price\",\n      \"name\": \"customClosePrice\",\n      \"type\": \"number\"\n    }\n  ]\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_metadata": {
+                      "type": "object",
+                      "properties": {
+                        "collection": {
+                          "type": "string",
+                          "example": "customfields"
+                        },
+                        "offset": {
+                          "type": "integer",
+                          "example": 0,
+                          "default": 0
+                        },
+                        "limit": {
+                          "type": "integer",
+                          "example": 10,
+                          "default": 0
+                        },
+                        "total": {
+                          "type": "string",
+                          "example": "4"
+                        }
+                      }
+                    },
+                    "customfields": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "example": 2,
+                            "default": 0
+                          },
+                          "label": {
+                            "type": "string",
+                            "example": "Birthday"
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "customBirthday"
+                          },
+                          "type": {
+                            "type": "string",
+                            "example": "date"
+                          },
+                          "isRecurring": {
+                            "type": "boolean",
+                            "example": true,
+                            "default": true
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/smartLists": {
+      "get": {
+        "summary": "/smartLists",
+        "description": "Get a list of Smart Lists.",
+        "operationId": "smartlists-get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of results to return. Max 100.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Specifies the number of rows to skip before starting to return results.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "fub2",
+            "in": "query",
+            "description": "By default this endpoint only returns Smart Lists created in the classic version of our UI. To return Smart Lists created in our current version, use this parameter.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "all",
+            "in": "query",
+            "description": "Use this parameter to show all smart lists, whether from FUB Classic or FUB.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"_metadata\": {\n    \"collection\": \"smartlists\",\n    \"offset\": 0,\n    \"limit\": 100,\n    \"total\": 3\n  },\n  \"smartlists\": [\n        {\n            \"id\": 14,\n            \"name\": \"Stay In Touch\",\n            \"isFub2\": false,\n            \"description\": null,\n            \"defaultSmartListId\": null\n        },\n        {\n            \"id\": 13,\n            \"name\": \"Email Activity\",\n            \"isFub2\": false,\n            \"description\": null,\n            \"defaultSmartListId\": null\n        },\n        {\n            \"id\": 12,\n            \"name\": \"IDX Activity\",\n            \"isFub2\": false,\n            \"description\": null,\n            \"defaultSmartListId\": null\n        }\n  ]\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_metadata": {
+                      "type": "object",
+                      "properties": {
+                        "collection": {
+                          "type": "string",
+                          "example": "smartlists"
+                        },
+                        "offset": {
+                          "type": "integer",
+                          "example": 0,
+                          "default": 0
+                        },
+                        "limit": {
+                          "type": "integer",
+                          "example": 100,
+                          "default": 0
+                        },
+                        "total": {
+                          "type": "integer",
+                          "example": 3,
+                          "default": 0
+                        }
+                      }
+                    },
+                    "smartlists": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "example": 14,
+                            "default": 0
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "Stay In Touch"
+                          },
+                          "isFub2": {
+                            "type": "boolean",
+                            "example": false,
+                            "default": true
+                          },
+                          "description": {},
+                          "defaultSmartListId": {}
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/templates": {
+      "get": {
+        "summary": "/templates",
+        "description": "Lists all email templates.",
+        "operationId": "templates-get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of results to return. Max 100.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Specifies the number of rows to skip before starting to return results.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"_metadata\": {\n    \"collection\": \"templates\",\n    \"offset\": 0,\n    \"limit\": 10,\n    \"total\": 5\n  },\n  \"templates\": [\n    {\n      \"id\": 6,\n      \"created\": \"2014-02-28T08:45:46Z\",\n      \"updated\": \"2014-08-12T17:24:22Z\",\n      \"createdById\": 14,\n      \"updatedById\": 14,\n      \"name\": \"I am here to help\",\n      \"isMobile\": 1,\n      \"isShared\": true,\n      \"body\": \"Hi %contact_first_name%, I am here to help, ...\",\n      \"subject\": \"%inquiry_address%\",\n      \"isEditable\": true,\n      \"isDeletable\": true,\n      \"actionPlans\": [\n        {\n            \"id\": 1,\n            \"name\": \"Buyers engagement emails\"\n        }\n      ]\n    }\n    ...\n  ]\n}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "post": {
+        "summary": "/templates",
+        "description": "Create a new email template.",
+        "operationId": "templates-post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "subject",
+                  "body"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the new email template."
+                  },
+                  "subject": {
+                    "type": "string",
+                    "description": "The email subject used when this email template is selected."
+                  },
+                  "body": {
+                    "type": "string",
+                    "description": "The HTML body of the email template."
+                  },
+                  "isShared": {
+                    "type": "boolean",
+                    "description": "Indicates whether this email template should be shared with other users in the same Follow Up Boss account."
+                  }
+                }
+              },
+              "examples": {
+                "Request Example": {
+                  "value": {
+                    "name": "Beach House promo",
+                    "subject": "Check out this beach house!",
+                    "body": "%greeting_time%,&nbsp;%contact_first_name%<br><br>Check out this beach house: <a href=\"https://example.com\">https://example.com</a><br><br>",
+                    "isShared": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "201",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"id\": 526,\n  \"created\": \"2021-06-21T21:23:12Z\",\n  \"updated\": \"2021-06-21T21:23:12Z\",\n  \"createdById\": 15,\n  \"updatedById\": 15,\n  \"name\": \"Beach House promo\",\n  \"imported\": 0,\n  \"isMobile\": 0,\n  \"isShared\": true,\n  \"body\": \"%greeting_time%,\u00a0%contact_first_name%<br /><br />Check out this beach house: <a href=\\\"https://example.com\\\">https://example.com</a><br /><br />\",\n  \"subject\": \"Check out this beach house!\",\n  \"isEditable\": true,\n  \"isDeletable\": true,\n  \"isShareable\": true,\n  \"actionPlans\": [],\n  \"categories\": []\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "example": 526,
+                      "default": 0
+                    },
+                    "created": {
+                      "type": "string",
+                      "example": "2021-06-21T21:23:12Z"
+                    },
+                    "updated": {
+                      "type": "string",
+                      "example": "2021-06-21T21:23:12Z"
+                    },
+                    "createdById": {
+                      "type": "integer",
+                      "example": 15,
+                      "default": 0
+                    },
+                    "updatedById": {
+                      "type": "integer",
+                      "example": 15,
+                      "default": 0
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Beach House promo"
+                    },
+                    "imported": {
+                      "type": "integer",
+                      "example": 0,
+                      "default": 0
+                    },
+                    "isMobile": {
+                      "type": "integer",
+                      "example": 0,
+                      "default": 0
+                    },
+                    "isShared": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "body": {
+                      "type": "string",
+                      "example": "%greeting_time%,\u00a0%contact_first_name%<br /><br />Check out this beach house: <a href=\"https://example.com\">https://example.com</a><br /><br />"
+                    },
+                    "subject": {
+                      "type": "string",
+                      "example": "Check out this beach house!"
+                    },
+                    "isEditable": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "isDeletable": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "isShareable": {
+                      "type": "boolean",
+                      "example": true,
+                      "default": true
+                    },
+                    "actionPlans": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {}
+                      }
+                    },
+                    "categories": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/users": {
+      "get": {
+        "summary": "/users",
+        "description": "Search for users.",
+        "operationId": "users-get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of results to return. Max 100.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Specifies the number of rows to skip before starting to return results.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Field to sort by. (Currently only `id`, `name` and `created` are available.)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "role",
+            "in": "query",
+            "description": "Find users by a specific role. (e.g., \"Broker\", \"Agent\", \"Lender\")",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Find a user by their full name. (Exact matches only, no partial matching available.)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "Find a user by their email.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fields",
+            "in": "query",
+            "description": "Comma separated list of fields (e.g., id,name,calling) to return or use\u00a0allFields\u00a0to return all fields (except for calling information, unless included like allFields,calling). <br><br> When using the\u00a0fields\u00a0parameter to filter the response, the\u00a0id\u00a0field will be included (even when not specified explicitly).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "includeDeleted",
+            "in": "query",
+            "description": "Setting this to `true` will include users that have been deleted.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"_metadata\": {\n    \"collection\": \"users\",\n    \"offset\": 0,\n    \"limit\": 10,\n    \"total\": 5,\n    \"next\": null,\n    \"nextLink\": null\n  },\n  \"users\": [\n    {\n      \"id\": 1,\n      \"created\": \"2023-03-06T19:48:47Z\",\n      \"updated\": \"2023-04-24T14:38:13Z\",\n      \"name\": \"Jean-Luc Picard\",\n      \"firstName\": \"Jean-Luc\",\n      \"lastName\": \"Picard\",\n      \"email\": \"jeanluc@enterprise.uss\",\n      \"phone\": \"1234567890\",\n      \"role\": \"Captain\",\n      \"status\": \"Active\",\n      \"timezone\": \"America/New_York\",\n      \"beta\": true,\n      \"picture\": [],\n      \"pauseLeadDistribution\": false,\n      \"lastSeenIos\": null,\n      \"lastSeenAndroid\": null,\n      \"lastSeenFub2\": \"2023-04-24T14:38:14Z\",\n      \"canExport\": true,\n      \"canCreateApiKeys\": true,\n      \"isOwner\": true,\n      \"groups\": [\n        {\n          \"id\": 2,\n          \"name\": \"Seller Leads\"\n        },\n        {\n          \"id\": 1,\n          \"name\": \"Team Integration Test\"\n        }\n      ],\n      \"teamIds\": [\n        1\n      ],\n      \"teamLeaderOf\": [],\n      \"leadEmailAddress\": \"cl.integration.test@followupboss.me\"\n    }\n    ...\n  ]\n}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/calls": {
+      "get": {
+        "summary": "/calls",
+        "description": "Search for calls.",
+        "operationId": "calls-get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of results to return. Max 100.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Specifies the number of rows to skip before starting to return results.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "personId",
+            "in": "query",
+            "description": "Filter calls by a person ID.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "phone",
+            "in": "query",
+            "description": "Filter calls based on the phone number of a specific person or lead. This will finds calls regardless of whether they were incoming or outgoing.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "toNumber",
+            "in": "query",
+            "description": "Filter calls based on the number that the call was to.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fromNumber",
+            "in": "query",
+            "description": "Filter calls based on the number that the call was from.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"_metadata\": {\n    \"collection\": \"calls\",\n    \"offset\": 0,\n    \"limit\": 10,\n    \"total\": 5\n  },\n  \"calls\": [\n    {\n      \"id\": 18,\n      \"created\": \"2014-06-20T23:28:51Z\",\n      \"updated\": \"2014-08-12T17:24:22Z\",\n      \"createdById\": 4,\n      \"updatedById\": 4,\n      \"phone\": \"555-405-0815\",\n      \"personId\": 12254,\n      \"userId\": 4,\n      \"userName\": \"Agent White\",\n      \"note\": \"A note about the call\",\n      \"outcome\": \"Left Message\",\n      \"isIncoming\": false,\n      \"duration\": 63,\n      \"ringDuration\": 5,\n      \"recordingUrl:\": \"Content is hidden for privacy reasons.\"\n    },\n    ...\n  ]\n}"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "post": {
+        "summary": "/calls",
+        "description": "Add a call.",
+        "operationId": "calls-post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "personId",
+                  "phone",
+                  "isIncoming"
+                ],
+                "properties": {
+                  "personId": {
+                    "type": "integer",
+                    "description": "The ID of a person associated with this call.",
+                    "format": "int32"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "description": "The phone number this call was made to or from."
+                  },
+                  "isIncoming": {
+                    "type": "boolean",
+                    "description": "Sets this as an incoming or outgoing call."
+                  },
+                  "note": {
+                    "type": "string",
+                    "description": "The log message entered for this call."
+                  },
+                  "outcome": {
+                    "type": "string",
+                    "description": "The outcome of the call, which can be one of `Interested`, `Not Interested`, `Left Message`, `No Answer`, `Busy` or `Bad Number`."
+                  },
+                  "duration": {
+                    "type": "integer",
+                    "description": "Length of the call in seconds.",
+                    "format": "int32"
+                  },
+                  "toNumber": {
+                    "type": "string",
+                    "description": "The phone number this call was made to."
+                  },
+                  "fromNumber": {
+                    "type": "string",
+                    "description": "The phone number this call was made from."
+                  },
+                  "userId": {
+                    "type": "integer",
+                    "description": "The ID of the user that made or received a call. (This can only be set by administrators, otherwise the currently logged in user's ID is used.)",
+                    "format": "int32"
+                  },
+                  "recordingUrl": {
+                    "type": "string",
+                    "description": "The URL for the call recording."
+                  }
+                }
+              },
+              "examples": {
+                "JSON Example": {
+                  "value": {
+                    "phone": "555-405-0815",
+                    "personId": 12254,
+                    "note": "John didn't have time to talk, call back on friday",
+                    "outcome": "Interested",
+                    "isIncoming": 0,
+                    "duration": 63
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    }
+  }
+}
