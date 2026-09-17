@@ -116,12 +116,22 @@ function buildParams(
       droppedWildcard = true;
       continue;
     }
+    let schema = p.schema;
+    let applyDefaultIfOmitted = false;
+    if (p.name === "limit" && schema && typeof schema.default === "number") {
+      // FUB's own default is 10; we deliberately want tools to request full
+      // pages by default, and actually send that value when omitted (not
+      // just claim it in the description) — see executeTool.
+      schema = { ...schema, default: 100 };
+      applyDefaultIfOmitted = true;
+    }
     params.push({
       name: p.name,
       in: "query",
       required: Boolean(p.required),
       description: p.description,
-      schema: p.schema,
+      schema,
+      applyDefaultIfOmitted,
     });
   }
 

@@ -72,9 +72,15 @@ export const descriptionAppendix: Record<string, string> = {
 };
 
 /**
- * Query-param defaults applied when the caller doesn't supply that param.
+ * Patches a param's exposed JSON-schema `default`. This is the single source
+ * of truth for "what value applies when the caller omits this argument" —
+ * tools.ts's executeTool reads the same `schema.default` at request time, so
+ * the exposed schema can never drift from actual runtime behavior the way a
+ * separately-maintained defaults map could (and once did, for this exact
+ * param — the schema said mergeTags defaults to false, inherited verbatim
+ * from FUB's spec, while the description and runtime both said true).
  * Keyed by tool name -> { paramName: defaultValue }.
  */
-export const queryDefaults: Record<string, Record<string, unknown>> = {
+export const paramDefaultOverrides: Record<string, Record<string, unknown>> = {
   update_person: { mergeTags: true },
 };

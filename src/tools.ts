@@ -1,5 +1,9 @@
 import { generateTools } from "./openapi/generate-tools.js";
-import { extraTools, descriptionAppendix, queryDefaults } from "./overrides/index.js";
+import {
+  extraTools,
+  descriptionAppendix,
+  paramDefaultOverrides,
+} from "./overrides/index.js";
 import { FubConfig } from "./auth.js";
 import { fubRequest } from "./http.js";
 import { ToolDef } from "./types.js";
@@ -69,6 +73,16 @@ export function buildToolDefs(config: FubConfig): ToolDef[] {
     }
     if (tool.isDelete) {
       tool.description += CONFIRM_NOTICE;
+    }
+
+    const overrides = paramDefaultOverrides[tool.name];
+    if (overrides) {
+      for (const param of tool.params) {
+        if (overrides[param.name] !== undefined) {
+          param.schema = { ...(param.schema ?? {}), default: overrides[param.name] };
+          param.applyDefaultIfOmitted = true;
+        }
+      }
     }
   }
 
@@ -152,7 +166,14 @@ export async function executeTool(
   const body: Record<string, unknown> = {};
 
   for (const param of tool.params) {
-    const value = args[param.name];
+    // Falls back to the schema's own `default` only for params we've
+    // deliberately flagged (limit, mergeTags) — same value shown to the
+    // model in the tool's JSON schema, so documented and actual behavior
+    // can't drift apart the way the old separate defaults map once did.
+    const schemaDefault = param.applyDefaultIfOmitted
+      ? (param.schema as { default?: unknown } | undefined)?.default
+      : undefined;
+    const value = args[param.name] !== undefined ? args[param.name] : schemaDefault;
     if (value === undefined) continue;
     if (param.in === "path") {
       path = path.replace(`{${param.name}}`, encodeURIComponent(String(value)));
@@ -160,13 +181,6 @@ export async function executeTool(
       query[param.name] = value;
     } else {
       body[param.name] = value;
-    }
-  }
-
-  const defaults = queryDefaults[tool.name];
-  if (defaults) {
-    for (const [key, value] of Object.entries(defaults)) {
-      if (query[key] === undefined) query[key] = value;
     }
   }
 
