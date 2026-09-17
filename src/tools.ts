@@ -14,6 +14,46 @@ export interface McpToolSchema {
   };
 }
 
+const SAFE_PROP_NAME = /^[a-zA-Z0-9_.-]{1,64}$/;
+
+/**
+ * Recursively strips any object property whose name Anthropic's tool-schema
+ * validator would reject (e.g. FUB's spec has a literal "custom*" wildcard
+ * placeholder buried inside a nested object at least once — POST /events'
+ * `person` sub-schema — not just at the top level). A rejected nested name
+ * fails the *whole* tool, same as a top-level one, so this has to recurse
+ * into properties/items/additionalProperties everywhere, not just once.
+ */
+function sanitizeSchema(schema: unknown): unknown {
+  if (Array.isArray(schema)) {
+    return schema.map(sanitizeSchema);
+  }
+  if (schema === null || typeof schema !== "object") {
+    return schema;
+  }
+  const input = schema as Record<string, unknown>;
+  const out: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(input)) {
+    if (key === "properties" && value && typeof value === "object") {
+      const cleaned: Record<string, unknown> = {};
+      for (const [propName, propSchema] of Object.entries(
+        value as Record<string, unknown>
+      )) {
+        if (SAFE_PROP_NAME.test(propName)) {
+          cleaned[propName] = sanitizeSchema(propSchema);
+        }
+      }
+      out[key] = cleaned;
+    } else if (key === "required" && Array.isArray(value)) {
+      // Drop required-list entries for anything we just filtered out above.
+      out[key] = value;
+    } else {
+      out[key] = sanitizeSchema(value);
+    }
+  }
+  return out;
+}
+
 const CONFIRM_NOTICE =
   " DESTRUCTIVE: this permanently deletes data in the user's live CRM. Do not call " +
   "this until the user has explicitly confirmed, in this conversation, that they want " +
@@ -43,10 +83,10 @@ export function toMcpSchema(tool: ToolDef): McpToolSchema {
   const required: string[] = [];
 
   for (const param of tool.params) {
-    properties[param.name] = {
+    properties[param.name] = sanitizeSchema({
       ...(param.schema ?? { type: "string" }),
       description: param.description,
-    };
+    });
     if (param.required) required.push(param.name);
   }
 

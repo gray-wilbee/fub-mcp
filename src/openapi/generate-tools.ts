@@ -89,8 +89,20 @@ function deriveName(method: string, path: string): string {
   return `${verb}_${literalSegs.join("_")}`;
 }
 
-function buildParams(op: OpenApiOperation, pathTemplate: string): ParamMeta[] {
+// Anthropic's tool-schema validator requires property names to match this —
+// FUB's spec documents a literal wildcard placeholder property named
+// "custom*" (meant as "any custom.<FieldLabel>") on a few /people operations,
+// which isn't a real property name and gets the whole tool rejected if left
+// in verbatim. Drop names that don't fit; extraQuery/extraBody already cover
+// passing arbitrary custom.* fields through.
+const SAFE_PROP_NAME = /^[a-zA-Z0-9_.-]{1,64}$/;
+
+function buildParams(
+  op: OpenApiOperation,
+  pathTemplate: string
+): { params: ParamMeta[]; droppedWildcard: boolean } {
   const params: ParamMeta[] = [];
+  let droppedWildcard = false;
 
   for (const seg of pathTemplate.split("/")) {
     if (seg.startsWith("{") && seg.endsWith("}")) {
@@ -100,6 +112,10 @@ function buildParams(op: OpenApiOperation, pathTemplate: string): ParamMeta[] {
 
   for (const p of op.parameters ?? []) {
     if (p.in !== "query") continue; // path params already captured above
+    if (!SAFE_PROP_NAME.test(p.name)) {
+      droppedWildcard = true;
+      continue;
+    }
     params.push({
       name: p.name,
       in: "query",
@@ -113,6 +129,10 @@ function buildParams(op: OpenApiOperation, pathTemplate: string): ParamMeta[] {
   if (bodySchema?.properties) {
     const requiredSet = new Set(bodySchema.required ?? []);
     for (const [name, schema] of Object.entries(bodySchema.properties)) {
+      if (!SAFE_PROP_NAME.test(name)) {
+        droppedWildcard = true;
+        continue;
+      }
       params.push({
         name,
         in: "body",
@@ -125,14 +145,15 @@ function buildParams(op: OpenApiOperation, pathTemplate: string): ParamMeta[] {
     }
   }
 
-  return params;
+  return { params, droppedWildcard };
 }
 
 function buildDescription(
   path: string,
   method: string,
   op: OpenApiOperation,
-  params: ParamMeta[]
+  params: ParamMeta[],
+  droppedWildcard: boolean
 ): string {
   const parts: string[] = [];
   parts.push(op.description || op.summary || `${method.toUpperCase()} ${path}`);
@@ -155,6 +176,16 @@ function buildDescription(
     );
   }
 
+  if (droppedWildcard) {
+    const via = method === "get" ? "extraQuery" : "extraBody";
+    parts.push(
+      `FUB's docs also list a wildcard "custom*" field here for reading/writing custom ` +
+        `fields directly (e.g. a "Closing Date" field as custom.ClosingDate) — that's not ` +
+        `a literal field name, so it's not in this tool's fixed schema. Pass custom.<FieldName> ` +
+        `entries via \`${via}\` instead. Call list_custom_fields first to get exact names.`
+    );
+  }
+
   return parts.join(" ");
 }
 
@@ -169,9 +200,9 @@ export function generateTools(): ToolDef[] {
       const op = methods[method];
       if (!op) continue;
 
-      const params = buildParams(op, path);
+      const { params, droppedWildcard } = buildParams(op, path);
       const name = deriveName(method, path);
-      const description = buildDescription(path, method, op, params);
+      const description = buildDescription(path, method, op, params, droppedWildcard);
       const isBodyCapable = method === "post" || method === "put" || method === "patch";
 
       tools.push({
