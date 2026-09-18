@@ -1,68 +1,60 @@
 ---
 name: fub-mcp-setup
-description: Use when the user wants to install/configure the fub-mcp Follow Up Boss MCP server for their own Claude Desktop or Claude Code, e.g. "set up my FUB MCP tools" or "add the fub-mcp server."
+description: Use when the user wants to install/configure the fub-mcp Follow Up Boss connector for their own Claude Desktop or Claude Code, e.g. "set up my FUB tools" or "install the Follow Up Boss extension."
 ---
 
 # Set up fub-mcp for this user's Claude
 
-**Do not ask the user for their Follow Up Boss API key in this conversation.**
-Whatever gets typed into a Claude chat is transmitted and stored as ordinary
-conversation content — on consumer accounts, "Help improve Claude" defaults to *on*,
-meaning that message (key included) could be retained up to 5 years and used as
-training data unless the user has turned it off. A live CRM credential should never
-pass through that path, and it doesn't need to: `fub-mcp` ships its own native,
-local credential entry that never touches any LLM context at all.
+**Never ask the user for their Follow Up Boss API key in this conversation.**
+Anything typed into a Claude chat is transmitted and stored as ordinary conversation
+content — on consumer accounts, "Help improve Claude" defaults to *on*, so that
+message could be retained for years and used for training. A live CRM credential must
+not pass through that path, and it doesn't need to: the extension collects the key in
+Claude Desktop's own masked field and stores it in the OS keychain.
 
-## Procedure
+You cannot install this for the user (you can't click their installer or open their
+settings). Your job is to **walk them through it, one step at a time, and wait for
+them to confirm each step before giving the next.** Assume they are not technical.
 
-1. **Check the platform.** The guided setup below currently only supports macOS
-   (native `osascript` popup). If the user is on Windows or Linux, skip to
-   "Manual setup" below instead.
+## Claude Desktop (the normal case) — no Terminal, no Node.js
 
-2. **Tell the user to run one command themselves**, in their own Terminal:
-   ```
-   npx -y fub-mcp setup
-   ```
-   Explain what it does before they run it: a native macOS dialog will appear
-   asking for their FUB API key (masked input, like a password field); it validates
-   the key against the live API; it saves the key to `~/.fub-mcp/.env` (readable
-   only by their own user account); and it automatically adds the (secret-free)
-   `fub-mcp` entry to their Claude Desktop config. **You cannot run this command on
-   their behalf** — it opens a GUI dialog on their physical screen, which only works
-   when a human runs it locally, not from an agent's own remote/sandboxed shell.
+1. Send them this link to download the extension file:
+   https://github.com/gray-wilbee/fub-mcp/releases/latest/download/fub-mcp.mcpb
+   (It downloads a file called `fub-mcp.mcpb`, usually to their Downloads folder.)
+2. Have them **double-click** that file. Claude Desktop opens an install screen. If it
+   doesn't open, they can drag the file into the Claude Desktop window, or use
+   Settings → Extensions → Advanced settings → Install Extension.
+3. On the install screen there's a masked field for their **Follow Up Boss API key**.
+   Tell them where to find it (in Follow Up Boss: **Admin → API**, then copy the
+   key), and that they paste it **into that field, not into this chat**. Then they
+   click Install. If Claude Desktop warns the extension is unsigned or from an
+   unverified developer, that's expected — it's an independent, open-source project
+   (https://github.com/gray-wilbee/fub-mcp); let them decide whether to continue.
+4. **Installing does not turn it on.** Have them open **Settings → Extensions**, find
+   **Follow Up Boss**, and switch the toggle **on**. This is the step people miss.
+5. Have them start a **new chat** (existing chats may not pick up new tools) and try:
+   "List my 3 most recently added contacts." If it works, they're done.
 
-3. **Tell them to fully restart Claude Desktop** (quit and reopen, not just close
-   the window) once the popup confirms success.
+If step 5 doesn't work: check the toggle is still on, fully quit and reopen Claude
+Desktop, and try a new chat again. A wrong or expired API key also looks like a
+failure — the fix is to open the extension's settings and re-enter the key.
 
-4. **Verify**: ask them to check Settings for `fub-mcp` showing as connected, or
-   just try asking a FUB-related question in a new conversation.
+## Claude Code, or someone comfortable with a terminal
 
-5. Mention the two skills that ship alongside the server
-   (`skills/query-smart-list`, `skills/create-html-email-template` in the fub-mcp
-   repo) as optional follow-up installs — this skill only covers server setup.
+They can register it directly (again — the key goes in their terminal, not this chat):
 
-## Manual setup (Windows/Linux, or if the guided setup fails)
-
-If you do end up needing to edit `claude_desktop_config.json` directly because the
-guided setup isn't available on their platform: still don't ask for the key in
-chat. Instead, write the config entry with an **empty placeholder** for
-`FUB_API_KEY` and tell the user to open the file themselves in a text editor and
-paste their real key into that one field directly — you show them exactly where,
-but you never see the value.
-
-```json
-{
-  "mcpServers": {
-    "fub-mcp": {
-      "command": "npx",
-      "args": ["-y", "fub-mcp"],
-      "env": { "FUB_API_KEY": "" }
-    }
-  }
-}
+```
+claude mcp add fub-mcp --env FUB_API_KEY=<their key> -- npx -y fub-mcp
 ```
 
-Always read the existing config file first and merge in — never overwrite the whole
-file, since it may already list other MCP servers the user depends on. Never add an
-entry with `FUB_MCP_ALLOW_DELETE` set unless the user has separately, explicitly
-asked for delete tools to be enabled.
+This needs Node.js 18+. On macOS there's also a guided popup that collects the key
+privately: `npx -y fub-mcp setup`.
+
+## What this does NOT do
+
+- Does not enable delete tools. Deletes are off by default; `FUB_MCP_ALLOW_DELETE=1`
+  turns them on and should only be added if the user separately, explicitly asks.
+- Does not reach Claude on the web or mobile. This is a local extension: it runs only
+  in Claude Desktop (or Claude Code) on the user's own computer.
+- Optional follow-ups: the repo's `skills/` folder has workflow skills for Smart Lists
+  and for email/text templates.

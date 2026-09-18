@@ -10,34 +10,31 @@ real but undocumented. Runs entirely on your machine — your API key never leav
 
 ## Install
 
-### Easiest: guided setup (macOS)
+### Claude Desktop (recommended — no Terminal, no Node.js)
+
+1. **Download** [`fub-mcp.mcpb`](https://github.com/gray-wilbee/fub-mcp/releases/latest/download/fub-mcp.mcpb)
+   and **double-click** it. Claude Desktop opens an install screen.
+2. **Paste your Follow Up Boss API key** into the masked field (FUB → Admin → API),
+   then click **Install**. Claude Desktop stores the key in your system keychain
+   (macOS Keychain / Windows Credential Manager); it is never typed into a chat and
+   never sent anywhere except directly to Follow Up Boss.
+3. **Turn it on.** Installing does not enable it: go to **Settings → Extensions**,
+   find **Follow Up Boss**, and switch the toggle **on**.
+4. **Start a new chat** and try *"List my 3 most recently added contacts."*
+
+Claude Desktop ships its own Node.js runtime, so nothing else needs installing.
+Notes: the bundle isn't code-signed yet, so Claude Desktop may show an
+unverified-developer caution; it has been tested on macOS, and Windows is supported
+by Claude Desktop but not yet tested by the maintainer. To update, download the
+newest `.mcpb` and install it over the old one.
+
+### Claude Code, other MCP clients, or Terminal users
 
 ```bash
-npx -y fub-mcp setup
+claude mcp add fub-mcp --env FUB_API_KEY=your-key -- npx -y fub-mcp
 ```
 
-This pops a native macOS dialog (masked input, like a password field) asking for
-your Follow Up Boss API key (FUB → Admin → API). It validates the key against the
-live API before saving, stores it in `~/.fub-mcp/.env` (permissions restricted to
-your user only), and wires the `mcpServers` entry into Claude Desktop's config for
-you — automatically. **Your key is never typed into a Claude conversation, never
-seen by any LLM, and never written into `claude_desktop_config.json`** — that file
-only ends up with a secret-free `{"command": "npx", "args": ["-y", "fub-mcp"]}`
-entry pointing at the server, which loads the key from `~/.fub-mcp/.env` at
-startup instead.
-
-Windows/Linux support for the guided setup isn't built yet — use the manual method
-below on those platforms for now.
-
-If you're on Claude Desktop or Claude Code, the [`claude-setup`](./claude-setup)
-skill has Claude tell you to run the one command above rather than trying to collect
-your key itself — see that folder's `SKILL.md` for why (short version: a plain chat
-message isn't a safe place for a live CRM credential to sit).
-
-### Manual
-
-Add to your MCP client's config (e.g. Claude Desktop's `claude_desktop_config.json`,
-or Claude Code's MCP settings):
+or add this to your MCP client's config (e.g. `claude_desktop_config.json`):
 
 ```json
 {
@@ -53,7 +50,18 @@ or Claude Code's MCP settings):
 }
 ```
 
-Get your API key from Follow Up Boss: **Admin → API**.
+Requires Node.js 18+. Get your API key from Follow Up Boss: **Admin → API**.
+
+#### macOS guided setup (alternative to putting the key in a config file)
+
+```bash
+npx -y fub-mcp setup
+```
+
+Pops a native macOS dialog (masked input) for your key, validates it against the live
+API, stores it in `~/.fub-mcp/.env` (permissions restricted to your user), and adds a
+secret-free `mcpServers` entry to Claude Desktop's config. If you're using Claude
+Desktop, the extension above is simpler and stores the key more securely.
 
 ### Optional environment variables
 
