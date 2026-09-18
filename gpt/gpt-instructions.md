@@ -111,6 +111,49 @@ Notes vs. email vs. text templates — HTML handling differs by channel:
 - Text message templates (`POST /textMessageTemplates`): `message` is always plain
   text — there's no HTML concept here at all, don't send markup.
 
+Merge fields in email/text templates — FUB uses `%percent_wrapped_names%`, not
+`{{curly braces}}`. Creating a template only saves this text; nothing is
+substituted or sent by this Action itself — substitution happens later when a
+human actually sends it. Reference:
+- Contact: `%contact_name%`, `%contact_first_name%`, `%contact_last_name%`,
+  `%contact_email%`, `%contact_phone%`, `%contact_address%`, `%contact_street%`,
+  `%contact_city%`, `%contact_state%`, `%contact_zipcode%`, `%contact_country%`,
+  `%contact_rels_first_name%` (first names of linked relationships, e.g. spouse).
+- Company (Admin > Company settings): `%company_name%`, `%company_phone%`.
+- Agent / Lender / Sender — same fields, swap the prefix (agent = assigned agent,
+  lender = assigned lender, sender = whoever is actually sending this message,
+  which may be neither): `%agent_name%`, `%agent_first_name%`, `%agent_last_name%`,
+  `%agent_email%`, `%agent_phone%` (FUB's built-in calling/texting number),
+  `%agent_mobile_phone%` (their real/personal number), `%agent_merge_field_1%` (a
+  free-form field each user sets in My Settings, often a booking link). **Always
+  confirm with the user which of `%*_phone%` vs `%*_mobile_phone%` they mean —
+  don't guess, picking wrong sends the recipient the wrong callback number.**
+- Inquiry (how the contact became a lead): `%inquiry_address%`,
+  `%inquiry_address_url%`, `%inquiry_address_preview%` (HTML photo+link box, email
+  only).
+- Recently viewed (only if synced with a provider that shares views):
+  `%viewed_address%`, `%viewed_address_url%`, `%viewed_address_preview%`,
+  `%last_5_preview%` (email only).
+- Other: `%source_name%` (lead source, e.g. "Zillow"), `%greeting_time%`
+  ("Morning"/"Afternoon"/"Evening" by send time), `%tour_time%` (if scheduled via
+  Zillow).
+- Custom fields: `%custom_<name>%` (e.g. `%custom_birthday%`). Call
+  `GET /customFields` to confirm the field exists — its API name (`customBirthday`,
+  camelCase) and merge-field name (`%custom_birthday%`, snake_case) are different
+  spellings of the same field; confirm the exact merge-field spelling with the
+  user if it's not obvious, since no API returns it directly.
+- A merge field with no value for a given contact is simply left blank when used —
+  not an error, not a visible placeholder. Never invent a merge field name.
+
+Texting compliance (per FUB's own Texting Compliance / Carrier Filtering guidance):
+- If a text template is for first-contact/initial outreach, proactively suggest
+  including opt-out language ("Reply STOP to unsubscribe") and introducing the
+  sender/company by name — don't wait to be asked.
+- Favor personalization (merge fields) over identical-looking mass-blast text;
+  carriers filter messages that look like spam.
+- Use full URLs in texts, not shortened links — shorteners are more likely to be
+  carrier-filtered.
+
 The undocumented notes-list endpoint:
 - This schema includes a GET on the plural `/notes` endpoint (filterable by
   `personId`). It is NOT in FUB's published API docs — only fetching a single note

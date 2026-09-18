@@ -49,6 +49,65 @@ export const extraTools: ToolDef[] = [
 ];
 
 /**
+ * FUB's %merge_field% syntax for email/text templates — verified against
+ * https://docs.followupboss.com/reference/merge-fields plus FUB's help
+ * center (Custom Merge Fields, How to Use Merge Fields, Calling and
+ * Texting Compliance, Carrier Filtering), and Will's own field notes from
+ * using the product day to day. Shared between create_template and
+ * create_text_message_template since the field syntax itself doesn't
+ * differ by channel — only which categories make sense to use where.
+ */
+const MERGE_FIELDS_GUIDE =
+  " FUB templates support %merge_field% placeholders that FUB substitutes when a " +
+  "human actually sends the template (not by this tool — this just saves the " +
+  "template text as-is). Reference:\n" +
+  "Contact: %contact_name% (full), %contact_first_name%, %contact_last_name%, " +
+  "%contact_email%, %contact_phone%, %contact_address%, %contact_street%, " +
+  "%contact_city%, %contact_state%, %contact_zipcode%, %contact_country%, " +
+  "%contact_rels_first_name% (first names of the contact's linked relationships, " +
+  "e.g. spouse/family added via peopleRelationships).\n" +
+  "Company (from Admin > Company settings): %company_name%, %company_phone%.\n" +
+  "Agent / Lender / Sender — same field set, swap the prefix (agent = assigned " +
+  "agent, lender = assigned lender, sender = whoever is actually sending this " +
+  "particular message, which may be neither): %agent_name%, %agent_first_name%, " +
+  "%agent_last_name%, %agent_email%, %agent_phone% (the FUB-assigned " +
+  "calling/texting number), %agent_mobile_phone% (their real/personal number), " +
+  "%agent_merge_field_1% (one free-form field each user sets in My Settings > " +
+  "Other Settings > Edit User Merge Field — commonly a booking link or social " +
+  "profile). ⚠️ %*_phone% vs %*_mobile_phone% is genuinely ambiguous — always " +
+  "confirm with the user which one they mean before using either; picking wrong " +
+  "sends the recipient the wrong callback number.\n" +
+  "Inquiry (how the contact became a lead, e.g. clicking \"Get more info\" on a " +
+  "listing site): %inquiry_address%, %inquiry_address_url% (only if the lead " +
+  "source provided one), %inquiry_address_preview% (renders an HTML photo+link " +
+  "box — email only, meaningless in a plain-text SMS template).\n" +
+  "Recently viewed (populated only when synced with a provider that shares " +
+  "property views): %viewed_address%, %viewed_address_url%, " +
+  "%viewed_address_preview%, %last_5_preview% (up to 5 as HTML boxes, email only).\n" +
+  "Other: %source_name% (lead source, e.g. \"Zillow\" — \"I saw your inquiry on " +
+  "%source_name%\"), %greeting_time% (\"Morning\"/\"Afternoon\"/\"Evening\" based " +
+  "on send time — \"Good %greeting_time%, %contact_first_name%\"), %tour_time% " +
+  "(populated if the contact scheduled a tour via Zillow).\n" +
+  "Custom fields: %custom_<name>% (e.g. %custom_website%, %custom_birthday%, " +
+  "%custom_spouse_name%). Call list_custom_fields to confirm a field exists — but " +
+  "note its API name (e.g. customBirthday, camelCase) and its merge-field name " +
+  "(%custom_birthday%, snake_case) are different spellings of the same field, and " +
+  "there's no API that returns the merge-field spelling directly, so confirm the " +
+  "exact form with the user (or FUB's own Merge Fields dropdown in the template " +
+  "composer) if it's not obvious from the label.\n" +
+  "A merge field with no value for a given contact is simply left blank when the " +
+  "template is used — not an error, not a visible placeholder.";
+
+const TEXTING_COMPLIANCE_NOTE =
+  " Texting-specific, per FUB's own Compliance/Carrier Filtering guidance: " +
+  "initial/first-outreach text templates should include opt-out language " +
+  "(\"Reply STOP to unsubscribe\") and introduce the sender/company by name. " +
+  "Avoid designing a template purely for identical mass-blasting — carriers " +
+  "filter messages that look like spam, personalization (via merge fields) " +
+  "reduces that risk. If the template includes a URL, use the full URL rather " +
+  "than a shortened link, since shorteners are more likely to get carrier-filtered.";
+
+/**
  * Per-tool description/behavior patches applied on top of the generated
  * (or extra) tool of the same name. Only add an entry here when the
  * generated description genuinely needs correcting or enriching — most
@@ -92,7 +151,11 @@ export const descriptionAppendix: Record<string, string> = {
     " If `body` contains HTML markup, you must also pass isHtml=true.",
   create_template:
     " `body` is the raw HTML of the email template directly — there is no separate " +
-    "isHtml/html flag for templates (unlike notes, which need isHtml=true explicitly).",
+    "isHtml/html flag for templates (unlike notes, which need isHtml=true explicitly)." +
+    MERGE_FIELDS_GUIDE,
+  update_template: MERGE_FIELDS_GUIDE,
+  create_text_message_template: MERGE_FIELDS_GUIDE + TEXTING_COMPLIANCE_NOTE,
+  update_text_message_template: MERGE_FIELDS_GUIDE + TEXTING_COMPLIANCE_NOTE,
   post_templates_merge:
     " Despite the name, this almost certainly does NOT send anything — inferred " +
     "from its identical-shaped sibling post_text_message_templates_merge, which was " +

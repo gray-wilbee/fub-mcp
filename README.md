@@ -102,13 +102,17 @@ A few things needed hand-written overrides in `src/overrides/`:
 
 ## Skills
 
-Two [Claude Skills](./skills) ship alongside the server for common multi-step
+Three [Claude Skills](./skills) ship alongside the server for common multi-step
 workflows the tools alone don't capture:
 
 - **`query-smart-list`** — resolve a Smart List by name (not just ID) before filtering
   people by it.
 - **`create-html-email-template`** — build and upload an HTML email template
-  correctly (see the HTML-handling gotcha above).
+  correctly (see the HTML-handling gotcha above), including FUB's `%merge_field%`
+  syntax.
+- **`create-text-template`** — build an SMS template with the same merge fields, plus
+  FUB's own texting-compliance guidance (opt-out language, carrier-filtering
+  avoidance).
 
 ## Using this outside Claude
 
