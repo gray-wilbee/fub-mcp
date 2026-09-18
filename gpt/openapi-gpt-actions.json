@@ -3919,6 +3919,491 @@
         },
         "deprecated": false
       }
+    },
+    "/events": {
+      "post": {
+        "summary": "/events",
+        "description": "Send in a lead or an event related to a lead. Use this \u2014 not the People create operation \u2014 when a NEW LEAD needs to be registered and should trigger FUB's lead routing, automations, and per-source workflows; a plain People create only inserts a bare contact record and triggers none of that.",
+        "operationId": "events-post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "source": {
+                    "type": "string",
+                    "description": "The name of the lead source."
+                  },
+                  "system": {
+                    "type": "string",
+                    "description": "The name of the system used in providing leads."
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "The type of event. Currently one of `Registration`, `Inquiry`, `Seller Inquiry`, `Property Inquiry`, `General Inquiry`, `Viewed Property`, `Saved Property`, `Visited Website`, `Incoming Call`, `Unsubscribed`, `Property Search`, `Saved Property Search`, `Visited Open House` or `Viewed Page`."
+                  },
+                  "message": {
+                    "type": "string",
+                    "description": "A message from the user about this inquiry."
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Any additional information about this inquiry."
+                  },
+                  "person": {
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "description": "The ID of the person the event corresponds to (optional).",
+                        "format": "int32"
+                      },
+                      "firstName": {
+                        "type": "string",
+                        "description": "The first/given name of the person."
+                      },
+                      "lastName": {
+                        "type": "string",
+                        "description": "The last/family name of the person."
+                      },
+                      "stage": {
+                        "type": "string",
+                        "description": "The stage of the person. (e.g., `Lead` or `Trash` See stages API endpoint for more options.)"
+                      },
+                      "source": {
+                        "type": "string",
+                        "description": "The source of the lead."
+                      },
+                      "sourceUrl": {
+                        "type": "string",
+                        "description": "This is a direct link to the information about a person at the lead provider."
+                      },
+                      "contacted": {
+                        "type": "boolean",
+                        "description": "Sets whether the person has been contacted or not.",
+                        "default": false
+                      },
+                      "price": {
+                        "type": "integer",
+                        "description": "The estimated sell/buy price for this person.",
+                        "format": "int32"
+                      },
+                      "assignedTo": {
+                        "type": "string",
+                        "description": "Full name of the agent to assign to this person."
+                      },
+                      "assignedLenderName": {
+                        "type": "string",
+                        "description": "Full name of the lender to assign to this person."
+                      },
+                      "assignedUserId": {
+                        "type": "integer",
+                        "description": "ID of the agent assigned to this person.",
+                        "format": "int32"
+                      },
+                      "assignedLenderId": {
+                        "type": "integer",
+                        "description": "ID of the lender assigned to this person.",
+                        "format": "int32"
+                      },
+                      "emails": {
+                        "type": "array",
+                        "description": "A list of email addresses associated with this person.",
+                        "items": {
+                          "properties": {
+                            "value": {
+                              "type": "string",
+                              "description": "The email address."
+                            },
+                            "type": {
+                              "type": "string",
+                              "description": "The type of email address. (e.g., \"work\", \"home\")"
+                            }
+                          },
+                          "type": "object"
+                        }
+                      },
+                      "phones": {
+                        "type": "array",
+                        "description": "A list of phone numbers associated with the person.",
+                        "items": {
+                          "properties": {
+                            "value": {
+                              "type": "string",
+                              "description": "The phone number. (e.g., 888-555-1234)."
+                            },
+                            "type": {
+                              "type": "string",
+                              "description": "Type of number. (e.g., \"mobile\", \"home\", \"fax\", etc.)"
+                            }
+                          },
+                          "type": "object"
+                        }
+                      },
+                      "addresses": {
+                        "type": "array",
+                        "description": "A list of addresses associated with the person (this is the address where this person can be contacted, it is not the address of a property this person may be interested in selling or buying).",
+                        "items": {
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "description": "The address type. (e.g., \"home\", \"work\", \"mailing\", \"investment\", etc.)",
+                              "default": "home"
+                            },
+                            "street": {
+                              "type": "string",
+                              "description": "Street address. (e.g., \"3595 South Higuera St., Suite B\")"
+                            },
+                            "city": {
+                              "type": "string",
+                              "description": "City name."
+                            },
+                            "state": {
+                              "type": "string",
+                              "description": "Abbreviated state code. (e.g., \"CA\", \"NY\", etc.)"
+                            },
+                            "code": {
+                              "type": "string",
+                              "description": "Zipcode. (As a string, not a number.)"
+                            },
+                            "country": {
+                              "type": "string",
+                              "description": "Country name. (e.g., \"United States\", \"Japan\", etc.)"
+                            }
+                          },
+                          "type": "object"
+                        }
+                      },
+                      "tags": {
+                        "type": "array",
+                        "description": "A list of tags applied to the person.",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "required": [],
+                    "type": "object",
+                    "description": "Information about the lead who triggered this event. Follow Up Boss will automatically de-duplicate people based on their phone number or email address."
+                  },
+                  "property": {
+                    "properties": {
+                      "street": {
+                        "type": "string",
+                        "description": "Street address. (e.g., \"3595 South Higuera St, Suite B\")"
+                      },
+                      "city": {
+                        "type": "string",
+                        "description": "City name."
+                      },
+                      "state": {
+                        "type": "string",
+                        "description": "Abbreviated state code. (e.g., \"CA\", \"NY\", etc.)"
+                      },
+                      "code": {
+                        "type": "string",
+                        "description": "Zipcode. (Only as a string, not a number. e.g., \"90210\")"
+                      },
+                      "mlsNumber": {
+                        "type": "string",
+                        "description": "MLS Number for the property."
+                      },
+                      "price": {
+                        "type": "integer",
+                        "description": "The asking price or price estimate for the property.",
+                        "format": "int32"
+                      },
+                      "forRent": {
+                        "type": "boolean",
+                        "description": "Sets whether this property is for rent or not."
+                      },
+                      "url": {
+                        "type": "string",
+                        "description": "A URL for the property provided by the lead source."
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "A freeform description of property type. (e.g., \"Bungalow\" or \"Apartment\")"
+                      },
+                      "bedrooms": {
+                        "type": "string",
+                        "description": "The number of bedrooms."
+                      },
+                      "bathrooms": {
+                        "type": "string",
+                        "description": "The number of bathrooms."
+                      },
+                      "area": {
+                        "type": "string",
+                        "description": "Area of the property in square feet."
+                      },
+                      "lot": {
+                        "type": "string",
+                        "description": "Area of the lot/land in acres."
+                      }
+                    },
+                    "required": [],
+                    "type": "object",
+                    "description": "Information about the property this event is related to."
+                  },
+                  "propertySearch": {
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "description": "The type of property the person was searching for. (e.g., \"Residential\", \"Lot\", \"Apartment\", etc.)"
+                      },
+                      "neighborhood": {
+                        "type": "string",
+                        "description": "The neighborhood or area in which a person is searching for a property."
+                      },
+                      "city": {
+                        "type": "string",
+                        "description": "The city in which a person was searching."
+                      },
+                      "state": {
+                        "type": "string",
+                        "description": "The state in which a person was searching."
+                      },
+                      "code": {
+                        "type": "array",
+                        "description": "The zipcode(s) in which a person was searching. (This can also be sent in as just a string for one zip code.)",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "minPrice": {
+                        "type": "integer",
+                        "description": "The minimum price in which a person was searching.",
+                        "format": "int32"
+                      },
+                      "maxPrice": {
+                        "type": "integer",
+                        "description": "The maximum price in which a person was searching.",
+                        "format": "int32"
+                      },
+                      "minBedrooms": {
+                        "type": "integer",
+                        "description": "The minimum number of bedrooms that a person was searching for.",
+                        "format": "int32"
+                      },
+                      "maxBedrooms": {
+                        "type": "integer",
+                        "description": "The maximum number of bedrooms that a person was searching for.",
+                        "format": "int32"
+                      },
+                      "minBathrooms": {
+                        "type": "number",
+                        "description": "The minimum number of bathrooms that a person was searching for.",
+                        "format": "float"
+                      },
+                      "maxBathrooms": {
+                        "type": "number",
+                        "description": "The maximum number of bathrooms that a person was searching for.",
+                        "format": "float"
+                      }
+                    },
+                    "required": [],
+                    "type": "object",
+                    "description": "If this event was an inquiry you may have information about what the person was searching for, you can submit this information using this field."
+                  },
+                  "campaign": {
+                    "type": "object",
+                    "description": "The name of the source where the lead originated. (e.g., If the lead came to your site through an organic search on `www.google.com` the source is \"Google\".)",
+                    "required": [
+                      "source"
+                    ],
+                    "properties": {
+                      "source": {
+                        "type": "string",
+                        "description": "The source of the campaign."
+                      },
+                      "medium": {
+                        "type": "string",
+                        "description": "The medium of the campaign. (e.g., For an organic search the medium is \"organic\".)"
+                      },
+                      "term": {
+                        "type": "string",
+                        "description": "The search terms entered by the person."
+                      },
+                      "content": {
+                        "type": "string",
+                        "description": "The content of the campaign."
+                      },
+                      "campaign": {
+                        "type": "string",
+                        "description": "The name or identifier for this campaign."
+                      }
+                    }
+                  },
+                  "pageTitle": {
+                    "type": "string",
+                    "description": "This field is to be used with the `Viewed Page` event type and indicates the title of the page viewed. (e.g., \"Contact Us\")"
+                  },
+                  "pageUrl": {
+                    "type": "string",
+                    "description": "This field is to be used with the `Viewed Page` event type and indicates the url of the page viewed. (e.g., \"http://www.samplerealestate.com/contact-us\")"
+                  },
+                  "pageReferrer": {
+                    "type": "string",
+                    "description": "This field is to be used with the `Viewed Page` event type and indicates the referrer url where the visitor came from. (e.g., \"https://www.google.com\") (Note: If `pageReferrer` is sent in, `pageUrl` should be set as well.)"
+                  },
+                  "pageDuration": {
+                    "type": "integer",
+                    "description": "This field is to be used with the `Viewed Page` event type and indicates the duration of the visitor on the page viewed given in seconds.",
+                    "format": "int32"
+                  },
+                  "occurredAt": {
+                    "type": "string",
+                    "description": "The date this event occurred. This is used to determine if the event is historical. Historical events will not trigger workflows upon creation. Any DateTime greater than 1 day will be considered historical.",
+                    "format": "date"
+                  }
+                }
+              },
+              "examples": {
+                "JSON Example 1": {
+                  "value": {
+                    "source": "Zillow",
+                    "system": "Zillow",
+                    "type": "Property Inquiry",
+                    "message": "I am interested in 6825 Mulholland Dr, ...",
+                    "description": "Move-in: 12/28/2013",
+                    "person": {
+                      "id": 1234,
+                      "firstName": "Melissa ",
+                      "lastName": "Hartman",
+                      "emails": [
+                        {
+                          "value": "m.hartman@example.com",
+                          "type": "home"
+                        }
+                      ],
+                      "phones": [
+                        {
+                          "value": "(555) 555-1234",
+                          "type": "home"
+                        }
+                      ],
+                      "tags": [
+                        "Lease option"
+                      ],
+                      "sourceUrl": "http://click.email.zillow.com/?qs=1e120cec11e3",
+                      "customBirthday": "2/16/1990"
+                    },
+                    "property": {
+                      "street": "6825 Mulholland Dr",
+                      "city": "Los Angeles",
+                      "state": "CA",
+                      "code": "90068",
+                      "mlsNumber": "14729339",
+                      "price": "310000",
+                      "forRent": "0",
+                      "url": "http://www.zillow.com/homedetails/6825-Mulholland-Dr-Los-Angeles-CA-90068/2109065822_zpid/",
+                      "type": "Residential"
+                    },
+                    "propertySearch": {
+                      "type": "Lot",
+                      "neighborhood": "Cahuenga Pass",
+                      "city": "Los Angeles",
+                      "state": "CA",
+                      "code": "90068",
+                      "minPrice": 100000,
+                      "maxPrice": 500000
+                    },
+                    "campaign": {
+                      "source": "google",
+                      "medium": "organic",
+                      "term": "Cahuenga Pass land",
+                      "content": "",
+                      "campaign": ""
+                    }
+                  }
+                },
+                "Example 2": {
+                  "value": {
+                    "source": "MyAwesomeWebsite.com",
+                    "system": "AwesomeSiteBuilder",
+                    "type": "General Inquiry",
+                    "message": "Looking for a house under $500k in the East Boston area",
+                    "person": {
+                      "firstName": "John",
+                      "lastName": "Smith",
+                      "emails": [
+                        {
+                          "value": "john@gmail.com"
+                        }
+                      ],
+                      "phones": [
+                        {
+                          "value": "555-555-5555"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "201",
+            "content": {
+              "text/plain": {
+                "examples": {
+                  "Result": {
+                    "value": ""
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "204",
+            "content": {
+              "text/plain": {
+                "examples": {
+                  "Result": {
+                    "value": ""
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "404",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
     }
   }
 }

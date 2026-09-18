@@ -22,9 +22,9 @@ own-copy approach is the one that works today.)*
 1. Scroll to **Actions → Create new action**.
 2. Paste in the contents of [`openapi-gpt-actions.json`](./openapi-gpt-actions.json)
    as the schema.
-3. ChatGPT should show 28 parsed operations across people, notes, tasks,
-   appointments, deals, pipelines, custom fields, smart lists, email/text
-   templates, users, calls, and text messages.
+3. ChatGPT should show 29 parsed operations across people, lead/event
+   registration, notes, tasks, appointments, deals, pipelines, custom fields,
+   smart lists, email/text templates, users, calls, and text messages.
 
 ## 3. Set up authentication
 

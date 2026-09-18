@@ -103,6 +103,23 @@ Avoiding duplicate contacts:
   `deduplicate=true`, or call `GET /people/checkDuplicate` first and confirm with
   the user if a likely match already exists.
 
+Registering a NEW LEAD vs. just adding a contact — these are different operations:
+- `POST /people` only inserts a bare contact record. It does NOT trigger FUB's lead
+  routing, automations, or any per-source workflow.
+- `POST /events` is the actual lead-ingestion event — use this, not `POST /people`,
+  whenever the user means "a new lead just came in" (a website registration, an
+  inquiry, an open house sign-in) rather than "just add this person to my CRM."
+  Set `type` to `Registration` for a genuinely new lead (other values: `Inquiry`,
+  `Seller Inquiry`, `Property Inquiry`, `General Inquiry`, `Viewed Property`,
+  `Saved Property`, `Visited Website`, `Incoming Call`, `Unsubscribed`, `Property
+  Search`, `Saved Property Search`, `Visited Open House`, `Viewed Page`). Set
+  `source` (lead routing rules commonly key off it). The nested `person` object is
+  auto-deduplicated by FUB via phone/email — no separate deduplicate flag needed.
+- ⚠️ If `occurredAt` is set more than 1 day in the past, FUB treats the event as
+  historical and will NOT trigger routing/automations at all. Leave it unset
+  (defaults to now) unless the user is deliberately importing historical data and
+  specifically wants nothing to fire.
+
 Notes vs. email vs. text templates — HTML handling differs by channel:
 - Notes: if the body contains HTML markup, you must explicitly pass `isHtml: true`,
   or FUB will render it as literal text.

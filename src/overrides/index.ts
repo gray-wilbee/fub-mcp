@@ -107,6 +107,13 @@ const TEXTING_COMPLIANCE_NOTE =
   "reduces that risk. If the template includes a URL, use the full URL rather " +
   "than a shortened link, since shorteners are more likely to get carrier-filtered.";
 
+const ACTION_PLANS_DEPRECATED_NOTE =
+  " ⚠️ Action Plans are a deprecated FUB feature — Automations are the current, " +
+  "recommended mechanism going forward. Unless the user specifically names an " +
+  "existing legacy Action Plan they already rely on, prefer the automationsPerson " +
+  "tools (create_automations_person to trigger one, update_automations_person to " +
+  "pause/unpause) over this one for new workflows.";
+
 /**
  * Per-tool description/behavior patches applied on top of the generated
  * (or extra) tool of the same name. Only add an entry here when the
@@ -143,7 +150,30 @@ export const descriptionAppendix: Record<string, string> = {
     "Unless the user clearly wants an intentional second/separate record (e.g. a " +
     "shared household phone), pass deduplicate=true, or call " +
     "get_people_check_duplicate first and confirm with the user if a likely match " +
-    "already exists.",
+    "already exists. " +
+    "⚠️ This does NOT register a new lead in FUB's sense: it creates a bare contact " +
+    "record only — no lead routing, no automations, no per-source workflows fire. " +
+    "If the user actually means \"a new lead just came in\" (e.g. from a website " +
+    "registration, an inquiry, an open house sign-in) rather than \"just add this " +
+    "person to my CRM,\" use create_event instead — that's what actually triggers " +
+    "FUB's lead routing and automations.",
+  create_event:
+    " Use this — not create_person — when a NEW LEAD needs to be registered and " +
+    "should trigger FUB's lead routing, automations, and per-source workflows. " +
+    "`create_person` only inserts a bare contact record and triggers none of that; " +
+    "this is the actual lead-ingestion event. Set `type` to one of `Registration`, " +
+    "`Inquiry`, `Seller Inquiry`, `Property Inquiry`, `General Inquiry`, `Viewed " +
+    "Property`, `Saved Property`, `Visited Website`, `Incoming Call`, " +
+    "`Unsubscribed`, `Property Search`, `Saved Property Search`, `Visited Open " +
+    "House`, or `Viewed Page` — `Registration` for a genuinely new lead. Set " +
+    "`source` (and `system` if relevant) since lead routing rules commonly key off " +
+    "source. FUB auto-deduplicates the nested `person` object by phone/email — no " +
+    "separate deduplicate flag needed here, unlike create_person. " +
+    "⚠️ If `occurredAt` is set to more than 1 day in the past, FUB treats the event " +
+    "as historical and will NOT trigger routing/automations at all — leave it unset " +
+    "(defaults to now) or within the last day if the point is to actually trigger " +
+    "workflows; only backdate it deliberately for importing historical data where " +
+    "you specifically don't want anything to fire.",
   create_note:
     " If `body` contains HTML markup, you must also pass isHtml=true — unlike email " +
     "templates, FUB does not auto-detect HTML in notes.",
@@ -171,6 +201,10 @@ export const descriptionAppendix: Record<string, string> = {
     "list_text_messages, only a rendered string back ({\"mergedTemplate\": \"...\"}). " +
     "It's a preview/render utility for the edge case of one text greeting multiple " +
     "recipients at once (e.g. \"Hey Bob, Alice and Carol...\"), not an actual send.",
+  create_action_plans_person: ACTION_PLANS_DEPRECATED_NOTE,
+  update_action_plans_person: ACTION_PLANS_DEPRECATED_NOTE,
+  list_action_plans_people: ACTION_PLANS_DEPRECATED_NOTE,
+  list_action_plans: ACTION_PLANS_DEPRECATED_NOTE,
 };
 
 /**
