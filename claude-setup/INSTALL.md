@@ -1,8 +1,3 @@
----
-name: fub-mcp-setup
-description: Use when the user wants to install the Follow Up Boss (fub-mcp) extension for Claude Desktop, e.g. "set up my FUB tools" or "install the Follow Up Boss extension."
----
-
 # Install the Follow Up Boss extension in Claude Desktop
 
 ## Rules for the assistant — read these first
