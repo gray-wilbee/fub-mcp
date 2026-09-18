@@ -1,0 +1,47 @@
+{
+  "manifest_version": "0.3",
+  "name": "fub-mcp",
+  "display_name": "Follow Up Boss",
+  "version": "0.2.1",
+  "description": "Work with your Follow Up Boss CRM from Claude: look up contacts and notes, log calls, create tasks, manage deals, and more.",
+  "long_description": "An unofficial, community-built connector for the Follow Up Boss real estate CRM (not affiliated with or endorsed by Follow Up Boss). Runs entirely on your computer using your own API key, which Claude Desktop stores in your system keychain. Deletes are disabled by default. Find your API key in Follow Up Boss under Admin > API.",
+  "author": {
+    "name": "Will Gray",
+    "url": "https://github.com/gray-wilbee"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gray-wilbee/fub-mcp"
+  },
+  "homepage": "https://github.com/gray-wilbee/fub-mcp",
+  "documentation": "https://github.com/gray-wilbee/fub-mcp#readme",
+  "support": "https://github.com/gray-wilbee/fub-mcp/issues",
+  "license": "MIT",
+  "keywords": ["followupboss", "crm", "real-estate", "mcp"],
+  "server": {
+    "type": "node",
+    "entry_point": "dist/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/dist/index.js"],
+      "env": {
+        "FUB_API_KEY": "${user_config.api_key}"
+      }
+    }
+  },
+  "user_config": {
+    "api_key": {
+      "type": "string",
+      "title": "Follow Up Boss API Key",
+      "description": "Your personal API key. In Follow Up Boss, go to Admin > API and copy it. It is stored in your computer's secure keychain and is never sent anywhere except directly to Follow Up Boss.",
+      "sensitive": true,
+      "required": true
+    }
+  },
+  "compatibility": {
+    "platforms": ["darwin", "win32"],
+    "runtimes": {
+      "node": ">=18.0.0"
+    }
+  }
+}
