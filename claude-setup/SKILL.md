@@ -23,9 +23,14 @@ description: Use when the user wants to install the Follow Up Boss (fub-mcp) ext
 1. **Download the file.** Give them this link and ask them to click it:
    https://github.com/gray-wilbee/fub-mcp/releases/latest/download/fub-mcp.mcpb
    It saves a file called `fub-mcp.mcpb`, usually into their Downloads folder.
-2. **Open it.** Ask them to double-click that file. Claude Desktop opens an install
-   screen. (If nothing happens, or it asks which app to use: choose Claude, or drag
-   the file into the Claude Desktop window.)
+2. **Install it from inside Claude Desktop.** Ask them to open Claude Desktop, go to
+   **Settings → Extensions → Advanced settings → Install Extension…**, and choose the
+   downloaded `fub-mcp.mcpb` (it's in their Downloads folder). Dragging the file onto
+   the Claude Desktop window also works. **Don't tell them to double-click it** —
+   that works on some computers but on Windows it offers Notepad or Media Player
+   instead of Claude. If such an "Open with" window ever appears, tell them to cancel
+   it and not pick another app. (Menu names can shift slightly between app versions;
+   look for "Extensions".)
 3. **Enter the key.** The install screen has a masked box for their Follow Up Boss API
    key. Tell them to find it in Follow Up Boss under **Admin → API**, copy it, and
    paste it **into that box** (not into this chat), then click **Install**. If Claude

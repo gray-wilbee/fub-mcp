@@ -13,23 +13,26 @@ real but undocumented. Runs entirely on your machine — your API key never leav
 ### Claude Desktop (recommended — no Terminal, no Node.js)
 
 1. **Download** [`fub-mcp.mcpb`](https://github.com/gray-wilbee/fub-mcp/releases/latest/download/fub-mcp.mcpb)
-   and **double-click** it. Claude Desktop opens an install screen.
-2. **Paste your Follow Up Boss API key** into the masked field (FUB → Admin → API),
+   (it lands in your Downloads folder).
+2. **Install it from inside Claude Desktop:** open **Settings → Extensions →
+   Advanced settings → Install Extension…** and choose the downloaded file. (Dragging
+   the file onto the Claude Desktop window also works. On macOS, double-clicking works
+   too, but **on Windows double-clicking does not** — Claude Desktop doesn't register
+   the file type, so Windows offers Notepad instead. Cancel that prompt and use the
+   in-app route.)
+3. **Paste your Follow Up Boss API key** into the masked field (FUB → Admin → API),
    then click **Install**. Claude Desktop stores the key in your system keychain
    (macOS Keychain / Windows Credential Manager); it is never typed into a chat and
    never sent anywhere except directly to Follow Up Boss.
-3. **Turn it on.** Installing does not enable it: go to **Settings → Extensions**,
+4. **Turn it on.** Installing does not enable it: go to **Settings → Extensions**,
    find **Follow Up Boss**, and switch the toggle **on**.
-4. **Start a new chat** and try *"List my 3 most recently added contacts."*
+5. **Start a new chat** and try *"List my 3 most recently added contacts."*
 
-Claude Desktop ships its own Node.js runtime, so nothing else needs installing.
-The steps are identical on macOS and Windows. Notes: the bundle isn't code-signed yet,
-so Claude Desktop may show an unverified-developer caution. It is pure JavaScript (no
-native binaries), tested end to end on macOS; Windows is supported by Claude Desktop
-and is being verified. If double-clicking the file doesn't open Claude Desktop, drag
-it into the Claude Desktop window, or use Settings → Extensions → Advanced settings →
-Install Extension. To update, download the newest `.mcpb` and install it over the old
-one.
+Claude Desktop ships its own Node.js runtime, so nothing else needs installing. Notes:
+the bundle isn't code-signed yet, so Claude Desktop may show an unverified-developer
+caution. It is pure JavaScript (no native binaries), tested end to end on macOS;
+Windows is being verified. To update, download the newest `.mcpb` and install it over
+the old one.
 
 ### Claude Code, other MCP clients, or Terminal users
 
