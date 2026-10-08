@@ -30,8 +30,8 @@ real but undocumented. Runs entirely on your machine — your API key never leav
 
 Claude Desktop ships its own Node.js runtime, so nothing else needs installing. Notes:
 the bundle isn't code-signed yet, so Claude Desktop may show an unverified-developer
-caution. It is pure JavaScript (no native binaries), tested end to end on macOS;
-Windows is being verified. To update, download the newest `.mcpb` and install it over
+caution. It is pure JavaScript (no native binaries) and has been tested end to end on
+both macOS and Windows. To update, download the newest `.mcpb` and install it over
 the old one.
 
 ### Claude Code, other MCP clients, or Terminal users
