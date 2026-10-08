@@ -23,10 +23,13 @@ real but undocumented. Runs entirely on your machine — your API key never leav
 4. **Start a new chat** and try *"List my 3 most recently added contacts."*
 
 Claude Desktop ships its own Node.js runtime, so nothing else needs installing.
-Notes: the bundle isn't code-signed yet, so Claude Desktop may show an
-unverified-developer caution; it has been tested on macOS, and Windows is supported
-by Claude Desktop but not yet tested by the maintainer. To update, download the
-newest `.mcpb` and install it over the old one.
+The steps are identical on macOS and Windows. Notes: the bundle isn't code-signed yet,
+so Claude Desktop may show an unverified-developer caution. It is pure JavaScript (no
+native binaries), tested end to end on macOS; Windows is supported by Claude Desktop
+and is being verified. If double-clicking the file doesn't open Claude Desktop, drag
+it into the Claude Desktop window, or use Settings → Extensions → Advanced settings →
+Install Extension. To update, download the newest `.mcpb` and install it over the old
+one.
 
 ### Claude Code, other MCP clients, or Terminal users
 
@@ -52,16 +55,14 @@ or add this to your MCP client's config (e.g. `claude_desktop_config.json`):
 
 Requires Node.js 18+. Get your API key from Follow Up Boss: **Admin → API**.
 
-#### macOS guided setup (alternative to putting the key in a config file)
+#### Optional: macOS-only key-entry popup
 
-```bash
-npx -y fub-mcp setup
-```
-
-Pops a native macOS dialog (masked input) for your key, validates it against the live
-API, stores it in `~/.fub-mcp/.env` (permissions restricted to your user), and adds a
-secret-free `mcpServers` entry to Claude Desktop's config. If you're using Claude
-Desktop, the extension above is simpler and stores the key more securely.
+If you'd rather not put your key in a config file, macOS users can run
+`npx -y fub-mcp setup`: a native masked dialog collects the key, validates it against
+the live API, saves it to `~/.fub-mcp/.env` (readable only by your user), and adds a
+secret-free entry to Claude Desktop's config. Claude Desktop users should prefer the
+extension above, which needs no Terminal and stores the key in the OS keychain. This
+popup is not available on Windows or Linux (use the extension, or the commands above).
 
 ### Optional environment variables
 

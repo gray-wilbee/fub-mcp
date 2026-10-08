@@ -2,7 +2,7 @@
   "manifest_version": "0.3",
   "name": "fub-mcp",
   "display_name": "Follow Up Boss",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Work with your Follow Up Boss CRM from Claude: look up contacts and notes, log calls, create tasks, manage deals, and more.",
   "long_description": "An unofficial, community-built connector for the Follow Up Boss real estate CRM (not affiliated with or endorsed by Follow Up Boss). Runs entirely on your computer using your own API key, which Claude Desktop stores in your system keychain. Deletes are disabled by default. Find your API key in Follow Up Boss under Admin > API.",
   "author": {

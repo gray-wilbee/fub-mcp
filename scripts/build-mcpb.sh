@@ -7,6 +7,11 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 VERSION=$(node -p "require('./package.json').version")
 MANIFEST_VERSION=$(node -p "require('./mcpb/manifest.json').version")
+SERVER_VERSION=$(grep -o 'name: "fub-mcp", version: "[^"]*"' src/index.ts | sed 's/.*version: "\(.*\)"/\1/')
+if [ "$VERSION" != "$SERVER_VERSION" ]; then
+  echo "Version mismatch: package.json=$VERSION src/index.ts=$SERVER_VERSION" >&2
+  exit 1
+fi
 if [ "$VERSION" != "$MANIFEST_VERSION" ]; then
   echo "Version mismatch: package.json=$VERSION mcpb/manifest.json=$MANIFEST_VERSION" >&2
   exit 1

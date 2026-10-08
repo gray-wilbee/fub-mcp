@@ -95,10 +95,13 @@ export function mergeClaudeConfig(
 export async function runSetup(opts: { local?: boolean } = {}): Promise<void> {
   if (process.platform !== "darwin") {
     console.error(
-      "`fub-mcp setup`'s native popup currently only supports macOS.\n" +
-        "On other platforms, set FUB_API_KEY directly in your MCP client's server " +
-        "config, or run `npx fub-mcp setup` again once Windows/Linux support ships.\n" +
-        "See README.md for the manual config snippet."
+      "`fub-mcp setup` (the private key-entry popup) is macOS-only.\n\n" +
+        "On Windows, Linux, or any other OS:\n" +
+        "  - Claude Desktop: install the one-click extension instead (no Terminal needed):\n" +
+        "    https://github.com/gray-wilbee/fub-mcp/releases/latest/download/fub-mcp.mcpb\n" +
+        "  - Claude Code: claude mcp add fub-mcp --env FUB_API_KEY=<your key> -- npx -y fub-mcp\n" +
+        "  - Any other MCP client: set FUB_API_KEY in the server's env config.\n" +
+        "Full instructions: https://github.com/gray-wilbee/fub-mcp#install"
     );
     process.exitCode = 1;
     return;

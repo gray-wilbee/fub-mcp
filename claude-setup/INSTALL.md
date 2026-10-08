@@ -19,7 +19,8 @@
    https://github.com/gray-wilbee/fub-mcp/releases/latest/download/fub-mcp.mcpb
    It saves a file called `fub-mcp.mcpb`, usually into their Downloads folder.
 2. **Open it.** Ask them to double-click that file. Claude Desktop opens an install
-   screen. (If nothing happens: drag the file into the Claude Desktop window.)
+   screen. (If nothing happens, or it asks which app to use: choose Claude, or drag
+   the file into the Claude Desktop window.)
 3. **Enter the key.** The install screen has a masked box for their Follow Up Boss API
    key. Tell them to find it in Follow Up Boss under **Admin → API**, copy it, and
    paste it **into that box** (not into this chat), then click **Install**. If Claude
