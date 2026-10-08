@@ -16,7 +16,7 @@ async function startServer() {
   const toolsByName = new Map(toolDefs.map((t) => [t.name, t]));
 
   const server = new Server(
-    { name: "fub-mcp", version: "0.2.2" },
+    { name: "fub-mcp", version: "0.2.3" },
     {
       capabilities: { tools: {} },
       instructions:

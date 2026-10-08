@@ -10,7 +10,7 @@ description: Use when the user wants to install the Follow Up Boss (fub-mcp) ext
 - The user is **not technical**. Do **not** mention Terminal, the command line, `npx`,
   Node.js, or config files. Do **not** ask what kind of computer they use — the steps
   are identical on Mac and Windows.
-- **Never ask for their Follow Up Boss API key in this chat.** They paste it into the
+- **Never ask for their Follow Up Boss API key, or any "system key", in this chat.** They paste it into the
   install screen's own masked field. (Chat messages are stored and, on consumer
   accounts, may be used for training by default — a CRM key must not go there.)
 - You can't install anything for them. **Give exactly one step at a time and wait for
@@ -33,7 +33,9 @@ description: Use when the user wants to install the Follow Up Boss (fub-mcp) ext
    look for "Extensions".)
 3. **Enter the key.** The install screen has a masked box for their Follow Up Boss API
    key. Tell them to find it in Follow Up Boss under **Admin → API**, copy it, and
-   paste it **into that box** (not into this chat), then click **Install**. If Claude
+   paste it **into that box** (not into this chat), then click **Install**. The screen
+   may also show two boxes marked "(Optional)" about a registered system ID and key —
+   tell them to leave those blank for now. If Claude
    Desktop warns the extension is unsigned or from an unverified developer, that's
    expected — it's an independent, open-source project
    (https://github.com/gray-wilbee/fub-mcp); let them decide whether to continue.
@@ -46,6 +48,23 @@ description: Use when the user wants to install the Follow Up Boss (fub-mcp) ext
 If step 5 doesn't work: check the toggle is still on, fully quit and reopen Claude
 Desktop, and try a new chat. A wrong or expired API key also looks like a failure —
 the fix is to open the extension's settings and re-enter the key.
+
+## Optional — only if they ask about rate limits, "registering," or heavy use
+
+Follow Up Boss lets each customer register their own "system" for a higher request
+rate. Don't bring this up unprompted. If they ask:
+
+1. Send them to https://apps.followupboss.com/system-registration to fill in the form
+   themselves (a system name, a "System ID Header" of their choosing, and their name,
+   email, and organization). FUB provides a **system key** afterwards.
+2. They enter the system ID and the system key in the two optional boxes: Claude
+   Desktop **Settings → Extensions → Follow Up Boss**, then restart Claude Desktop.
+3. **The system key is a secret. Never ask them to paste or read it to you, and never
+   repeat it.** It goes only into that masked box — not this chat, email, a
+   screenshot, or a plain-text file (a password manager is fine). If they paste it
+   into the chat anyway, don't use it: tell them to enter it in the masked box
+   instead, and that because it appeared in a conversation they should email
+   api@followupboss.com and ask for a replacement key.
 
 ## Good to know (mention only if they ask)
 

@@ -67,12 +67,35 @@ secret-free entry to Claude Desktop's config. Claude Desktop users should prefer
 extension above, which needs no Terminal and stores the key in the OS keychain. This
 popup is not available on Windows or Linux (use the extension, or the commands above).
 
+### Recommended for heavy use: register your own FUB system
+
+Follow Up Boss asks API users to register their system, and registered systems get a
+higher request rate (FUB's API states this in its responses). By default this tool
+identifies itself as an unregistered `fub-mcp`. FUB's terms also say a system key is
+private and must not be shared, so a shared one can't ship with this project: each
+customer registers their own.
+
+1. Register at <https://apps.followupboss.com/system-registration> (system name, a
+   "System ID Header" of your choosing such as `acme-realty-claude`, your name, email,
+   and organization). Read the terms linked on that page.
+2. FUB provides your **X-System-Key** after you register.
+3. In Claude Desktop, open **Settings → Extensions → Follow Up Boss** and fill in the
+   two optional fields: **your registered system ID** (the System ID Header) and
+   **your system key**. Restart Claude Desktop. (Other clients: set
+   `FUB_MCP_SYSTEM_NAME` and `FUB_MCP_SYSTEM_KEY`.)
+
+**Keep the system key private, like your API key.** Paste it only into that masked
+field. Never put it in a chat, email, screenshot, or plain-text file; if you need a
+copy, use a password manager. The setup instructions tell Claude never to ask for it.
+If a key ever lands somewhere it shouldn't, email api@followupboss.com and ask for a
+replacement.
+
 ### Optional environment variables
 
 | Variable | Default | Purpose |
 |---|---|---|
 | `FUB_MCP_SYSTEM_NAME` | `fub-mcp` | Sent as `X-System` so FUB attributes actions to this tool and grants the better registered-system rate limit. |
-| `FUB_MCP_SYSTEM_KEY` | unset | Only needed if you've separately [registered your own system](https://followupboss.com/2/api). |
+| `FUB_MCP_SYSTEM_KEY` | unset | Only needed if you've separately [registered your own system](https://apps.followupboss.com/system-registration). |
 | `FUB_MCP_ALLOW_DELETE` | `0` | Set to `1` to enable DELETE-verb tools at all. See **Delete safety** below. |
 
 ## Delete safety

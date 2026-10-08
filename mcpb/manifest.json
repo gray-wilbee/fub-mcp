@@ -2,7 +2,7 @@
   "manifest_version": "0.3",
   "name": "fub-mcp",
   "display_name": "Follow Up Boss",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Work with your Follow Up Boss CRM from Claude: look up contacts and notes, log calls, create tasks, manage deals, and more.",
   "long_description": "An unofficial, community-built connector for the Follow Up Boss real estate CRM (not affiliated with or endorsed by Follow Up Boss). Runs entirely on your computer using your own API key, which Claude Desktop stores in your system keychain. Deletes are disabled by default. Find your API key in Follow Up Boss under Admin > API.",
   "author": {
@@ -17,15 +17,24 @@
   "documentation": "https://github.com/gray-wilbee/fub-mcp#readme",
   "support": "https://github.com/gray-wilbee/fub-mcp/issues",
   "license": "MIT",
-  "keywords": ["followupboss", "crm", "real-estate", "mcp"],
+  "keywords": [
+    "followupboss",
+    "crm",
+    "real-estate",
+    "mcp"
+  ],
   "server": {
     "type": "node",
     "entry_point": "dist/index.js",
     "mcp_config": {
       "command": "node",
-      "args": ["${__dirname}/dist/index.js"],
+      "args": [
+        "${__dirname}/dist/index.js"
+      ],
       "env": {
-        "FUB_API_KEY": "${user_config.api_key}"
+        "FUB_API_KEY": "${user_config.api_key}",
+        "FUB_MCP_SYSTEM_NAME": "${user_config.system_name}",
+        "FUB_MCP_SYSTEM_KEY": "${user_config.system_key}"
       }
     }
   },
@@ -36,10 +45,27 @@
       "description": "Your personal API key. In Follow Up Boss, go to Admin > API and copy it. It is stored in your computer's secure keychain and is never sent anywhere except directly to Follow Up Boss.",
       "sensitive": true,
       "required": true
+    },
+    "system_name": {
+      "type": "string",
+      "title": "(Optional) Your registered system ID",
+      "description": "Leave blank unless you registered your own system with Follow Up Boss (recommended for heavy use; see the README). This is the 'System ID Header' you chose when registering.",
+      "sensitive": false,
+      "required": false
+    },
+    "system_key": {
+      "type": "string",
+      "title": "(Optional) Your system key",
+      "description": "Leave blank unless you registered your own system. This is a secret: paste it only here, never into a chat or email. Stored in your system keychain.",
+      "sensitive": true,
+      "required": false
     }
   },
   "compatibility": {
-    "platforms": ["darwin", "win32"],
+    "platforms": [
+      "darwin",
+      "win32"
+    ],
     "runtimes": {
       "node": ">=18.0.0"
     }
