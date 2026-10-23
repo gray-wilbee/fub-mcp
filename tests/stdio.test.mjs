@@ -1,10 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { fileURLToPath } from 'node:url';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 
 async function withClient(env,run){
- const transport=new StdioClientTransport({command:process.execPath,args:['--import',new URL('./mock-preload.mjs',import.meta.url).pathname,process.env.FUB_TEST_ENTRY ?? new URL('../dist/index.js',import.meta.url).pathname],env:{FUB_API_KEY:'synthetic-test-key',FUB_MCP_SYSTEM_KEY:'',FUB_MCP_ALLOW_WRITE:'0',FUB_MCP_ALLOW_DELETE:'0',FUB_MCP_ALLOW_WEBHOOKS:'0',FUB_MCP_ALLOW_AUTOMATIONS:'0',...env},stderr:'pipe'});
+ const transport=new StdioClientTransport({command:process.execPath,args:['--import',new URL('./mock-preload.mjs',import.meta.url).href,process.env.FUB_TEST_ENTRY ?? fileURLToPath(new URL('../dist/index.js',import.meta.url))],env:{FUB_API_KEY:'synthetic-test-key',FUB_MCP_SYSTEM_KEY:'',FUB_MCP_ALLOW_WRITE:'0',FUB_MCP_ALLOW_DELETE:'0',FUB_MCP_ALLOW_WEBHOOKS:'0',FUB_MCP_ALLOW_AUTOMATIONS:'0',...env},stderr:'pipe'});
  const client=new Client({name:'offline-tests',version:'1.0.0'});
  let stderr='';transport.stderr?.on('data',b=>stderr+=b);
  try {await client.connect(transport);await run(client);assert.ok(!stderr.includes('synthetic-test-key'));}
