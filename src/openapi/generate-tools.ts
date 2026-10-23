@@ -106,7 +106,12 @@ function buildParams(
 
   for (const seg of pathTemplate.split("/")) {
     if (seg.startsWith("{") && seg.endsWith("}")) {
-      params.push({ name: seg.slice(1, -1), in: "path", required: true });
+      const name = seg.slice(1, -1);
+      const declared = op.parameters?.find(p => p.in === "path" && p.name === name)?.schema;
+      const schema = declared?.type === "integer"
+        ? { anyOf: [{ type: "integer", minimum: 1, maximum: Number.MAX_SAFE_INTEGER }, { type: "string", pattern: "^[1-9][0-9]{0,15}$" }] }
+        : { type: "string", minLength: 1, maxLength: 200, pattern: "^[A-Za-z0-9_][A-Za-z0-9_.:-]*$", ...(declared?.enum ? { enum: declared.enum } : {}) };
+      params.push({ name, in: "path", required: true, schema });
     }
   }
 

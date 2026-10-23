@@ -5,3 +5,6 @@ dist/
 .DS_Store
 .mcpb-build/
 *.mcpb
+
+*.tgz
+*.mcpb.sha256

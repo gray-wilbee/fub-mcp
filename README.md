@@ -1,178 +1,143 @@
 # fub-mcp
 
-A comprehensive [Model Context Protocol](https://modelcontextprotocol.io) server for
-the [Follow Up Boss](https://www.followupboss.com/) real estate CRM API. Not
-affiliated with or endorsed by Follow Up Boss.
+A free, MIT-licensed [Model Context Protocol](https://modelcontextprotocol.io)
+server for the [Follow Up Boss](https://www.followupboss.com/) CRM API. Unofficial;
+not affiliated with or endorsed by Follow Up Boss. FUB, model and hosting charges
+are separate.
 
-Generates one MCP tool per FUB API operation (~130+ tools) directly from FUB's
-published OpenAPI spec, plus a small set of hand-written extras for behavior that's
-real but undocumented. Runs entirely on your machine — your API key never leaves it.
+**Starts in “View information” mode.** You can look up contacts, notes, tasks,
+deals and other information. To create or update records, turn on **“View and update
+records.”** Write capabilities remain part of the server; you choose whether to
+allow them. Both the tool list and individual calls enforce your selection.
+
+The server uses **stdio**: your MCP client launches it on the same machine. Your
+key is sent to FUB over HTTPS, and CRM results pass to your chosen agent/model
+provider. This project does not run a hosted backend.
 
 ## Install
 
-### Claude Desktop (recommended — no Terminal, no Node.js)
+### Claude Desktop: no Terminal required
 
-1. **Download** [`fub-mcp.mcpb`](https://github.com/gray-wilbee/fub-mcp/releases/latest/download/fub-mcp.mcpb)
-   (it lands in your Downloads folder).
-2. **Install it from inside Claude Desktop:** open **Settings → Extensions →
-   Advanced settings → Install Extension…** and choose the downloaded file. (Dragging
-   the file onto the Claude Desktop window also works. On macOS, double-clicking works
-   too, but **on Windows double-clicking does not** — Claude Desktop doesn't register
-   the file type, so Windows offers Notepad instead. Cancel that prompt and use the
-   in-app route.)
-3. **Paste your Follow Up Boss API key** into the masked field (FUB → Admin → API),
-   then click **Install**. Claude Desktop stores the key in your system keychain
-   (macOS Keychain / Windows Credential Manager); it is never typed into a chat and
-   never sent anywhere except directly to Follow Up Boss.
-4. **Turn it on.** Installing does not enable it: go to **Settings → Extensions**,
-   find **Follow Up Boss**, and switch the toggle **on**.
-5. **Start a new chat** and try *"List my 3 most recently added contacts."*
+1. Download `fub-mcp-VERSION.mcpb` from the chosen
+   [GitHub release](https://github.com/gray-wilbee/fub-mcp/releases). Check the
+   release version and checksum. Version 0.3.0 is the first release with access modes;
+   do not assume an older bundle has them.
+2. In Claude Desktop, open **Settings → Extensions → Advanced settings → Install
+   Extension…** and choose the file. Use the in-app route; double-click handling
+   differs between operating systems.
+3. Paste your FUB API key into the masked **Follow Up Boss API Key** field, never
+   into chat. Leave **View and update records** off to start with viewing only.
+4. Enable the extension under **Settings → Extensions**, then start a new chat.
+5. Try an authorized read such as “List my three most recently added contacts.”
 
-Claude Desktop ships its own Node.js runtime, so nothing else needs installing. Notes:
-the bundle isn't code-signed yet, so Claude Desktop may show an unverified-developer
-caution. It is pure JavaScript (no native binaries) and has been tested end to end on
-both macOS and Windows. To update, download the newest `.mcpb` and install it over
-the old one.
+The extension marks key fields as sensitive for the host's secret storage. Current
+bundles are unsigned; review the source and release before installing. The host must
+provide Node 22.16 or later in a supported release line. The 0.3.0 settings changes
+still require a fresh Mac/Windows GUI installation check before a stable release;
+previous-version GUI tests do not establish compatibility for this version.
 
-### Claude Code, other MCP clients, or Terminal users
+### Enable updates when you want them
 
-```bash
-claude mcp add fub-mcp --env FUB_API_KEY=your-key -- npx -y fub-mcp
-```
+In **Settings → Extensions → Follow Up Boss**, turn on **View and update records**,
+then restart the extension and open a new chat. You can now create and update records,
+including notes and tasks. Turn it off and restart to return to viewing only.
 
-or add this to your MCP client's config (e.g. `claude_desktop_config.json`):
+For a CLI or JSON-configured host, the single change is:
 
 ```json
-{
-  "mcpServers": {
-    "fub-mcp": {
-      "command": "npx",
-      "args": ["-y", "fub-mcp"],
-      "env": {
-        "FUB_API_KEY": "your-fub-api-key"
-      }
-    }
-  }
-}
+"FUB_MCP_ALLOW_WRITE": "1"
 ```
 
-Requires Node.js 18+. Get your API key from Follow Up Boss: **Admin → API**.
+Add it to this server's `env` settings, then restart the host/server. Change it to
+`"0"` to return to viewing only. Do not change the API key to switch modes.
 
-#### Optional: macOS-only key-entry popup
+**Advanced actions stay off separately:** permanent deletes, webhook management,
+and direct workflow triggers require their own opt-ins. Webhooks also need an
+approved hostname. See [access modes](docs/INSTALLATION.md#access-modes).
+Every non-GET call requires `confirm: true`, but this caller-supplied flag is not proof
+of human approval; use your host's independent approval controls. Ordinary record
+updates can also activate your existing FUB business rules.
 
-If you'd rather not put your key in a config file, macOS users can run
-`npx -y fub-mcp setup`: a native masked dialog collects the key, validates it against
-the live API, saves it to `~/.fub-mcp/.env` (readable only by your user), and adds a
-secret-free entry to Claude Desktop's config. Claude Desktop users should prefer the
-extension above, which needs no Terminal and stores the key in the OS keychain. This
-popup is not available on Windows or Linux (use the extension, or the commands above).
+### Other local clients and always-on agents
 
-### Recommended for heavy use: register your own FUB system
+Follow [installation](docs/INSTALLATION.md) for source builds and secret-free client
+configuration. Pin a reviewed revision; avoid fetching mutable code at every launch.
+Use a supported Node release (22.16+, 24 or 26; Node 24 is the guide's baseline).
 
-Follow Up Boss asks API users to register their system, and registered systems get a
-higher request rate (FUB's API states this in its responses). By default this tool
-identifies itself as an unregistered `fub-mcp`. FUB's terms also say a system key is
-private and must not be shared, so a shared one can't ship with this project: each
-customer registers their own.
+- A desktop/CLI client can launch the stdio process locally.
+- An agent you control can run alongside it on a private VM. See the
+  [DigitalOcean guide](docs/DIGITALOCEAN.md).
+- A cloud product requiring an HTTPS MCP URL needs transport and authentication
+  code that this repository **does not provide**. A reverse proxy alone is insufficient.
+- See the dated [platform notes](docs/INSTALLATION.md#platform-status) for Dot,
+  Grok Bot, Muse and Claude Duet. These are documented capabilities, not tested
+  installation claims.
+- [Custom GPT Actions](gpt/SETUP.md) are a separate integration. They call FUB directly
+  and **do not use this server's access-mode or safety controls**. Keep configured GPTs
+  private and assess their permissions separately.
 
-1. Register at <https://apps.followupboss.com/system-registration> (system name, a
-   "System ID Header" of your choosing such as `acme-realty-claude`, your name, email,
-   and organization). Read the terms linked on that page.
-2. FUB provides your **X-System-Key** after you register.
-3. In Claude Desktop, open **Settings → Extensions → Follow Up Boss** and fill in the
-   two optional fields: **your registered system ID** (the System ID Header) and
-   **your system key**. Restart Claude Desktop. (Other clients: set
-   `FUB_MCP_SYSTEM_NAME` and `FUB_MCP_SYSTEM_KEY`.)
+## API key and data security
 
-**Keep the system key private, like your API key.** Paste it only into that masked
-field. Never put it in a chat, email, screenshot, or plain-text file; if you need a
-copy, use a password manager. The setup instructions tell Claude never to ask for it.
-If a key ever lands somewhere it shouldn't, email api@followupboss.com and ask for a
-replacement.
+Use protected client settings or secret injection. Never put a key in chat,
+command-line arguments, a repository or an online encoder. A FUB API key inherits
+its user's permissions; choose the least-privileged identity that works for the job.
+See [security guidance](docs/SECURITY-GUIDE.md).
 
-### Optional environment variables
+Process `FUB_API_KEY` takes precedence over `~/.fub-mcp/.env`. A project-root `.env`
+is not loaded automatically. The optional macOS `setup --local` command collects a
+key in a native dialog, performs a live `/me` check, saves a plaintext file with
+POSIX 0600 permissions in a 0700 directory, and configures Claude Desktop. Use the
+extension's sensitive field when available. Setup is not an offline test.
 
-| Variable | Default | Purpose |
-|---|---|---|
-| `FUB_MCP_SYSTEM_NAME` | `fub-mcp` | Sent as `X-System` so FUB attributes actions to this tool and grants the better registered-system rate limit. |
-| `FUB_MCP_SYSTEM_KEY` | unset | Only needed if you've separately [registered your own system](https://apps.followupboss.com/system-registration). |
-| `FUB_MCP_ALLOW_DELETE` | `0` | Set to `1` to enable DELETE-verb tools at all. See **Delete safety** below. |
+Follow [FUB identification requirements](https://docs.followupboss.com/reference/identification),
+including registration when providing services to customers. If applicable, set
+both `FUB_MCP_SYSTEM_NAME` and `FUB_MCP_SYSTEM_KEY` through protected settings.
+A system name alone does not grant registered-system status. Keep system credentials
+separate from customer API keys and never distribute either.
 
-## Delete safety
+## What is included
 
-Follow Up Boss DELETE calls are permanent. This server treats them as opt-in at two
-layers:
+Tools are generated at startup from the vendored FUB OpenAPI description, with
+small overrides for undocumented notes listing and API behavior. In version 0.3.0:
 
-1. **Server-level opt-in**: unless `FUB_MCP_ALLOW_DELETE=1` is set in the server's
-   environment, delete tools aren't registered at all — the model never sees them as
-   callable.
-2. **Per-call confirmation**: even with that flag set, every delete tool requires a
-   `confirm: true` argument, and its description instructs the model to get explicit,
-   specific confirmation from the user before calling it — not to infer consent from
-   general intent.
+- **70 GET tools** in View information mode.
+- **126 tools** with ordinary writes enabled, while advanced opt-ins stay off.
+- **157 tools** when all advanced permissions are enabled.
 
-Neither layer trusts the model alone; both must be satisfied.
+The conservative read mode also blocks POST-based preview/render utilities. Defaults
+remain `limit=100` and `mergeTags=true`; pass explicit declared fields to change them.
+Extra query/body fields cannot overwrite declared parameters. Extras are limited to
+custom fields and `update_person` collaborators; invalid IDs/types/fields fail before
+an API request.
 
-## What's generated vs. hand-written
+Requests reject redirects, have a 30-second total budget, a 2 MiB response limit,
+a 256 KiB input limit and at most four active upstream calls. Only GET 429 responses
+are retried (at most twice, respecting Retry-After within the budget). Writes are
+never automatically retried. Check the record before retrying a timed-out write.
 
-Most tools (`list_people`, `create_note`, `update_deal`, ...) are generated at build
-time straight from FUB's OpenAPI spec (vendored in `src/openapi/fub-openapi.json` —
-refresh it from https://docs.followupboss.com/openapi to pick up FUB API changes).
+Treat CRM free text, links and HTML as untrusted data, never instructions. These
+controls reduce risk; they do not prevent all prompt injection or constrain other
+tools an agent can use. An agent with your user's shell access may have access to
+credentials outside the MCP protocol.
 
-A few things needed hand-written overrides in `src/overrides/`:
+The [skills](skills) describe smart-list lookup and email/text template creation.
+Review those workflows against the access mode you selected.
 
-- **`list_notes`** — FUB's docs only document `GET /notes/{id}`, but the plural
-  `GET /notes` endpoint works today and supports a `personId` filter. Confirmed
-  against the live API; treated as best-effort since it's unofficial.
-- **`update_person` tag handling** — adding tags should pass `mergeTags=true`
-  (defaulted for you); removing a tag has no dedicated endpoint and requires a
-  fetch → filter → PUT-the-whole-array-back pattern (documented in the tool
-  description).
-- **Notes vs. templates HTML handling** — notes need `isHtml: true` set explicitly
-  for HTML bodies; email templates take raw HTML directly with no such flag. These
-  are easy to mix up, so both tools' descriptions call it out.
-- Two spec quirks fixed transparently by the generator: a couple of endpoints use
-  `:id` instead of `{id}` for path params, and the rate-limit endpoints' documented
-  paths double up the `/v1` prefix that's already in the base URL.
+## Development and releases
 
-## Skills
-
-Three [Claude Skills](./skills) ship alongside the server for common multi-step
-workflows the tools alone don't capture:
-
-- **`query-smart-list`** — resolve a Smart List by name (not just ID) before filtering
-  people by it.
-- **`create-html-email-template`** — build and upload an HTML email template
-  correctly (see the HTML-handling gotcha above), including FUB's `%merge_field%`
-  syntax.
-- **`create-text-template`** — build an SMS template with the same merge fields, plus
-  FUB's own texting-compliance guidance (opt-out language, carrier-filtering
-  avoidance).
-
-## Using this outside Claude
-
-- **ChatGPT Custom GPT**: see [`gpt/`](./gpt) for a trimmed, ≤30-operation OpenAPI
-  schema and setup instructions — each person builds their own GPT with their own
-  API key, no shared/hosted backend involved.
-- **Claude web or mobile without the desktop app**: not currently supported.
-  Claude.ai's custom-connector UI only supports OAuth (or an org-admin-only static
-  header beta) for remote connectors, so there's no individual, bring-your-own-key
-  path there today the way there is for a Custom GPT. Reaching pure web/mobile users
-  would require a hosted, multi-tenant OAuth backend — out of scope for this repo for
-  now.
-
-## Development
-
-```bash
-npm install
-npm run build
-npm run inspect   # opens the MCP Inspector against the built server
+```sh
+npm ci --ignore-scripts
+npm test
+npm run check:release
+npm pack --dry-run --ignore-scripts
 ```
 
-`src/openapi/generate-tools.ts` does the spec → tool-schema conversion;
-`src/overrides/index.ts` is where undocumented endpoints, description corrections,
-and default overrides live. `src/tools.ts` merges the two and applies delete-gating.
+Tests use synthetic keys and mocked fetch; no live CRM access. The old live
+`smoke-test.mjs` now exits with a pointer to `npm test`. See the
+[release checklist and npm handoff](docs/RELEASE.md), [migration notes](CHANGELOG.md)
+and [security reporting policy](SECURITY.md).
 
 ## License
 
-MIT
+[MIT](LICENSE). Review upstream API terms and required third-party notices before
+redistribution. This project and its security review are not vendor certification.

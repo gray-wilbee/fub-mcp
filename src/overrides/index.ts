@@ -26,6 +26,7 @@ export const extraTools: ToolDef[] = [
         in: "query",
         required: false,
         description: "Only return notes for this person ID.",
+        schema: { type: "integer", minimum: 1 },
       },
       {
         name: "limit",
@@ -124,7 +125,7 @@ export const descriptionAppendix: Record<string, string> = {
   update_person:
     " Tag removal has no dedicated endpoint: to remove a tag, first GET this person, " +
     "filter the tag out of their current `tags` array yourself, then PUT the full " +
-    "filtered array back (with mergeTags left at its default of false so it replaces " +
+    "filtered array back (with mergeTags explicitly set to false so it replaces " +
     "rather than merges). To add tags, just pass the new tags with mergeTags=true " +
     "(this tool's default) so they're unioned with the person's existing tags. " +
     "⚠️ DATA LOSS RISK, confirmed against the live API: `emails`, `phones`, and " +
@@ -206,19 +207,6 @@ export const descriptionAppendix: Record<string, string> = {
   list_action_plans_people: ACTION_PLANS_DEPRECATED_NOTE,
   list_action_plans: ACTION_PLANS_DEPRECATED_NOTE,
 };
-
-/**
- * Tools that aren't DELETEs but still take a hard-to-undo, visible-to-others
- * action (e.g. actually sending real communication) — same confirm=true
- * discipline as deletes via ToolDef.requiresConfirm, but not gated behind
- * FUB_MCP_ALLOW_DELETE. Currently empty: post_templates_merge and
- * post_text_message_templates_merge were the only candidates, and testing
- * live against a real phone number (2026-09) showed neither one actually
- * sends anything — see their descriptionAppendix entries above. Kept as an
- * explicit mechanism rather than removed, since a genuinely sensitive
- * non-delete action would be easy to miss without one.
- */
-export const sensitiveTools = new Set<string>([]);
 
 /**
  * Deletes whose blast radius extends well beyond the one record being

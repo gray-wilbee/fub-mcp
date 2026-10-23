@@ -65,14 +65,13 @@ rate. Don't bring this up unprompted. If they ask:
 
 - Their key is stored in their computer's secure keychain and is only ever sent
   directly to Follow Up Boss.
-- Deleting records is switched off by default.
+- Viewing only is the default. To change records, enable **View and update records** in extension settings, restart it, and open a new chat. Deletes, webhooks and direct workflow triggers have separate advanced settings.
 - It works in Claude Desktop only (not claude.ai in a browser, and not the phone app).
 
 ## Only if the user says they use Claude Code
 
-They can register it themselves; the key goes in their terminal, not this chat. Needs
-Node.js 18+:
-
-```
-claude mcp add fub-mcp --env FUB_API_KEY=<their key> -- npx -y fub-mcp
-```
+Use the [stdio installation guide](../docs/INSTALLATION.md). Configure the reviewed
+local build with absolute paths and use the client's protected secret settings or
+a private runtime environment. Do not put the key in shell arguments, shell history,
+or chat. Use a supported Node.js LTS release. Viewing only is the default. To enable ordinary updates set `FUB_MCP_ALLOW_WRITE=1`
+and restart the host. Advanced actions need their own switches.
