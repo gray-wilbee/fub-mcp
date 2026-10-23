@@ -131,3 +131,11 @@ test('total deadline signal is installed and aborts a hanging request',async()=>
   await assert.rejects(pending,/timed out/);assert.equal(budget,30000);assert.equal(calls.length,1);
  } finally {AbortSignal.timeout=original;}
 });
+
+test('webhook host allowlist cannot permit bracketed IPv6 or trailing-dot localhost',async()=>{
+ reset();
+ for(const host of ['[::1]','[2001:db8::1]','localhost.']) {
+  await assert.rejects(executeTool({...cfg,webhookHosts:[host]},by.create_webhook,{url:`https://${host}/hook`,event:'peopleCreated',confirm:true}),/destination/);
+ }
+ assert.equal(calls.length,0);
+});

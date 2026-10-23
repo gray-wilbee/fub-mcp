@@ -98,7 +98,8 @@ existing business rules in FUB; do not promise that they have no side effects.
 
 Webhook hostnames must be exact (comma-separated if needed), without wildcards.
 New/changed destinations must be HTTPS on port 443, with no embedded credentials,
-IP address or fragment. Host restrictions do not audit existing webhook URLs;
+IP address (including IPv6), trailing-dot hostname or fragment. Host restrictions
+do not audit existing webhook URLs;
 review existing subscriptions before granting webhook administration.
 
 ## Configuration and secret precedence

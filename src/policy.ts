@@ -16,9 +16,13 @@ export function validateWebhook(config: FubConfig, tool: ToolDef, body: Record<s
   let url: URL;
   try { url = new URL(String(body.url)); } catch { throw new Error("Webhook URL must be a valid HTTPS URL."); }
   const hosts = config.webhookHosts ?? [];
+  const hostname = url.hostname;
+  const ipCandidate = hostname.startsWith("[") && hostname.endsWith("]")
+    ? hostname.slice(1, -1)
+    : hostname;
   if (url.protocol !== "https:" || url.username || url.password || url.hash ||
-      (url.port && url.port !== "443") || isIP(url.hostname) ||
-      url.hostname === "localhost" || url.hostname.endsWith(".localhost") ||
+      (url.port && url.port !== "443") || isIP(ipCandidate) ||
+      hostname.endsWith(".") || url.hostname === "localhost" || url.hostname.endsWith(".localhost") ||
       !hosts.includes(url.hostname)) {
     throw new Error("Webhook destination must use HTTPS on port 443 and an exact host in FUB_MCP_WEBHOOK_HOSTS, without credentials or fragments.");
   }
