@@ -2,9 +2,9 @@
   "manifest_version": "0.3",
   "name": "fub-mcp",
   "display_name": "Follow Up Boss",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "Work with your Follow Up Boss CRM from Claude: look up contacts and notes, log calls, create tasks, manage deals, and more.",
-  "long_description": "An unofficial, community-built connector for the Follow Up Boss real estate CRM (not affiliated with or endorsed by Follow Up Boss). Runs entirely on your computer using your own API key, which Claude Desktop stores in your system keychain. Deletes are disabled by default. Find your API key in Follow Up Boss under Admin > API.",
+  "long_description": "An unofficial Follow Up Boss connector. Starts in View information mode. Turn on View and update records in extension settings to enable ordinary changes. Deletes, webhook administration and direct workflow triggers require separate advanced opt-ins. Uses your own FUB API key; results are shared with your chosen assistant.",
   "author": {
     "name": "Will Gray",
     "url": "https://github.com/gray-wilbee"
@@ -34,7 +34,12 @@
       "env": {
         "FUB_API_KEY": "${user_config.api_key}",
         "FUB_MCP_SYSTEM_NAME": "${user_config.system_name}",
-        "FUB_MCP_SYSTEM_KEY": "${user_config.system_key}"
+        "FUB_MCP_SYSTEM_KEY": "${user_config.system_key}",
+        "FUB_MCP_ALLOW_WRITE": "${user_config.allow_write}",
+        "FUB_MCP_ALLOW_DELETE": "${user_config.allow_delete}",
+        "FUB_MCP_ALLOW_WEBHOOKS": "${user_config.allow_webhooks}",
+        "FUB_MCP_ALLOW_AUTOMATIONS": "${user_config.allow_automations}",
+        "FUB_MCP_WEBHOOK_HOSTS": "${user_config.webhook_hosts}"
       }
     }
   },
@@ -59,6 +64,40 @@
       "description": "Leave blank unless you registered your own system. This is a secret: paste it only here, never into a chat or email. Stored in your system keychain.",
       "sensitive": true,
       "required": false
+    },
+    "allow_write": {
+      "type": "boolean",
+      "title": "View and update records",
+      "description": "Off: View information only. On: also create and update records. Restart the extension after changing. Deletes, webhooks and direct workflow triggers stay off.",
+      "default": false,
+      "required": false
+    },
+    "allow_delete": {
+      "type": "boolean",
+      "title": "Advanced: allow permanent deletes",
+      "description": "Requires View and update records. Each delete also requires confirmation.",
+      "default": false,
+      "required": false
+    },
+    "allow_webhooks": {
+      "type": "boolean",
+      "title": "Advanced: manage webhooks",
+      "description": "Requires View and update records. New/changed destinations must match Allowed webhook hosts.",
+      "default": false,
+      "required": false
+    },
+    "allow_automations": {
+      "type": "boolean",
+      "title": "Advanced: trigger workflows directly",
+      "description": "Requires View and update records. Allows lead events, Action Plans and Automation triggers; these can cause communications.",
+      "default": false,
+      "required": false
+    },
+    "webhook_hosts": {
+      "type": "string",
+      "title": "Advanced: allowed webhook hosts",
+      "description": "Exact HTTPS hostnames, comma-separated (no URLs or wildcards). Required when creating/changing webhook destinations.",
+      "required": false
     }
   },
   "compatibility": {
@@ -67,7 +106,7 @@
       "win32"
     ],
     "runtimes": {
-      "node": ">=18.0.0"
+      "node": ">=22.16.0"
     }
   }
 }

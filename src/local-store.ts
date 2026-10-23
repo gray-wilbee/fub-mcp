@@ -24,8 +24,19 @@ export function readLocalEnvFile(): Record<string, string> {
 }
 
 export function writeLocalApiKey(apiKey: string): void {
+  if (!apiKey || /[\r\n\0]/.test(apiKey)) throw new Error("API key must be a nonempty single line.");
   fs.mkdirSync(LOCAL_STORE_DIR, { recursive: true, mode: 0o700 });
-  fs.writeFileSync(LOCAL_ENV_FILE, `FUB_API_KEY=${apiKey}\n`, { mode: 0o600 });
+  if (fs.lstatSync(LOCAL_STORE_DIR).isSymbolicLink()) throw new Error("Credential directory must not be a symbolic link.");
   fs.chmodSync(LOCAL_STORE_DIR, 0o700);
-  fs.chmodSync(LOCAL_ENV_FILE, 0o600);
+  const temporary = path.join(LOCAL_STORE_DIR, `.env-${process.pid}-${Date.now()}`);
+  const fd = fs.openSync(temporary, "wx", 0o600);
+  try {
+    fs.writeFileSync(fd, `FUB_API_KEY=${apiKey}\n`);
+    // Atomic replacement avoids following a preexisting file symlink or writing
+    // secret bytes into an existing file with overly broad permissions.
+    fs.renameSync(temporary, LOCAL_ENV_FILE);
+  } finally {
+    fs.closeSync(fd);
+    fs.rmSync(temporary, { force: true });
+  }
 }

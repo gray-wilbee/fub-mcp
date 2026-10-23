@@ -1,6 +1,6 @@
 {
   "name": "fub-mcp",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "A comprehensive Model Context Protocol (MCP) server wrapping the Follow Up Boss (FUB) real estate CRM API.",
   "type": "module",
   "bin": {
@@ -11,13 +11,21 @@
     "dist",
     "skills",
     "claude-setup",
-    "README.md"
+    "README.md",
+    "docs",
+    "gpt",
+    "PRIVACY.md",
+    "CHANGELOG.md",
+    "SECURITY.md"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
     "dev": "tsc -p tsconfig.json --watch",
-    "inspect": "npx @modelcontextprotocol/inspector node dist/index.js"
+    "inspect": "npx --yes @modelcontextprotocol/inspector@2.12.0 node dist/index.js",
+    "test": "npm run build && node --test --test-concurrency=1 tests/*.test.mjs",
+    "check:release": "node scripts/check-release.mjs",
+    "build:mcpb": "bash scripts/build-mcpb.sh"
   },
   "keywords": [
     "mcp",
@@ -30,13 +38,22 @@
   ],
   "license": "MIT",
   "engines": {
-    "node": ">=18"
+    "node": "^22.16.0 || ^24.0.0 || ^26.0.0"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.12.0"
+    "@modelcontextprotocol/sdk": "1.32.1",
+    "ajv": "8.20.0"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",
     "typescript": "^5.5.4"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gray-wilbee/fub-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gray-wilbee/fub-mcp/issues"
+  },
+  "homepage": "https://github.com/gray-wilbee/fub-mcp#readme"
 }

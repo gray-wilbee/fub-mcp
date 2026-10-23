@@ -2,8 +2,9 @@
 
 This page covers the ChatGPT Custom GPT built from this repo's
 [`gpt/`](./gpt) files. (For the standalone MCP server instead, see the
-[README](./README.md) — it runs entirely on your own machine and doesn't
-involve ChatGPT or OpenAI at all.)
+[README](./README.md) — it runs wherever your MCP client launches it. Its API responses can be sent
+to that client's model provider, including OpenAI if you choose an OpenAI client.
+See [deployment and key security](./docs/SECURITY-GUIDE.md).)
 
 ## How this GPT handles your data
 

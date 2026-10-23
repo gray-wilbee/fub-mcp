@@ -99,7 +99,7 @@ export async function runSetup(opts: { local?: boolean } = {}): Promise<void> {
         "On Windows, Linux, or any other OS:\n" +
         "  - Claude Desktop: install the one-click extension instead (no Terminal needed):\n" +
         "    https://github.com/gray-wilbee/fub-mcp/releases/latest/download/fub-mcp.mcpb\n" +
-        "  - Claude Code: claude mcp add fub-mcp --env FUB_API_KEY=<your key> -- npx -y fub-mcp\n" +
+        "  - Other clients: use protected secret settings; never put the key in CLI arguments.\n" +
         "  - Any other MCP client: set FUB_API_KEY in the server's env config.\n" +
         "Full instructions: https://github.com/gray-wilbee/fub-mcp#install"
     );
@@ -143,7 +143,7 @@ export async function runSetup(opts: { local?: boolean } = {}): Promise<void> {
           command: process.execPath, // this Node binary, for reproducible dev testing
           args: [path.join(path.dirname(new URL(import.meta.url).pathname), "index.js")],
         }
-      : { command: "npx", args: ["-y", "fub-mcp"] };
+      : { command: "npx", args: ["-y", "fub-mcp@0.3.0"] };
     const configResult = mergeClaudeConfig(serverEntry, { overwrite: opts.local });
 
     macAlert(

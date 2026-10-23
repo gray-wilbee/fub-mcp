@@ -1,9 +1,9 @@
 # Setting up the FUB Custom GPT (bring your own API key)
 
 Each person who wants to use this creates **their own** Custom GPT from this schema
-and enters **their own** Follow Up Boss API key into it. Nobody's key passes through
-anyone else's account or server — ChatGPT calls the FUB API directly using the key
-you put into your own GPT's configuration.
+and enters **their own** Follow Up Boss API key into it. ChatGPT stores the credential and calls FUB from OpenAI's infrastructure; the
+repository maintainer does not operate an intermediary. Keep the GPT private.
+Sharing a configured GPT can give other users access under your FUB identity.
 
 *(A version that lets everyone share one GPT link with true per-user sign-in — via
 FUB's OAuth support — is being investigated as a future improvement. This bring-your-
@@ -32,14 +32,12 @@ own-copy approach is the one that works today.)*
 2. Set **Auth Type** to **Basic**.
 3. Get your Follow Up Boss API key: in FUB, go to **Admin → API** (or ask your
    account admin if you don't have access) and copy your personal API key.
-4. **Confirmed**: paste the raw key straight in and it does not work — ChatGPT's
-   "Basic" field expects the value already base64-encoded, the same way FUB's own
-   docs describe the `Authorization` header (`Basic base64("yourkey:")`, key
-   followed by a colon, blank password). Precompute it yourself:
-   ```bash
-   echo -n "yourapikeyhere:" | base64
-   ```
-   and paste that resulting string into the **API Key** field — not the raw key.
+4. This repository's tested Basic-auth configuration uses base64 of the API key
+   followed by a colon (blank password). Base64 is reversible and is itself a
+   credential. Prepare it with a trusted offline password-manager utility, then
+   paste it only into the Action authentication field. Do not type a key into
+   `echo`, command arguments, chat, online encoders, or shared terminals. Recheck
+   the current Builder behavior before publishing instructions for a new release.
 
 ## 4. Add the privacy policy
 
@@ -53,12 +51,12 @@ https://github.com/gray-wilbee/fub-mcp/blob/main/PRIVACY.md
 Try a few things in a new chat with your GPT:
 - "Show me my 5 most recently added contacts"
 - "What Smart Lists do I have?"
-- "Log a note on [contact name] saying I left them a voicemail"
+- Start with reads. Test writes only in an authorized disposable account after review.
 
 ## Notes
 
-- This GPT **cannot delete anything** — the schema has no delete operations by
-  design. Deletions still have to happen in the FUB app directly.
+- The schema exposes no DELETE operations. Updates can still replace or remove
+  data, and events can trigger workflows; this is not a read-only integration.
 - Your API key (in its base64-encoded form) is stored by ChatGPT as part of your own
   GPT's configuration, the same way any other Custom GPT credential is stored. It is
   not visible to other people who might later use a GPT you choose to share — when

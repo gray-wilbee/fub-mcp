@@ -16,7 +16,7 @@ async function startServer() {
   const toolsByName = new Map(toolDefs.map((t) => [t.name, t]));
 
   const server = new Server(
-    { name: "fub-mcp", version: "0.2.3" },
+    { name: "fub-mcp", version: "0.3.0" },
     {
       capabilities: { tools: {} },
       instructions:
@@ -35,13 +35,13 @@ async function startServer() {
     tools: toolDefs.map(toMcpSchema),
   }));
 
-  server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  server.setRequestHandler(CallToolRequestSchema, async (request, extra) => {
     const { name, arguments: args } = request.params;
     const tool = toolsByName.get(name);
     if (!tool) {
       return {
         isError: true,
-        content: [{ type: "text", text: `Unknown tool: ${name}` }],
+        content: [{ type: "text", text: "Tool unavailable in the selected access mode." }],
       };
     }
 
@@ -49,7 +49,8 @@ async function startServer() {
       const result = await executeTool(
         config,
         tool,
-        (args ?? {}) as Record<string, unknown>
+        (args ?? {}) as Record<string, unknown>,
+        extra.signal
       );
       return {
         content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
@@ -72,7 +73,7 @@ async function startServer() {
   await server.connect(transport);
   console.error(
     `fub-mcp running with ${toolDefs.length} tools ` +
-      `(delete tools ${config.allowDelete ? "enabled" : "disabled"})`
+      `(${config.allowWrite ? "View and update records" : "View information"})`
   );
 }
 
